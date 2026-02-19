@@ -11,14 +11,14 @@ def actin_supervised_training(train_paths, val_paths, out_dir):
     sampler = MinForegroundSampler(min_fraction=0.025, p_reject=0.95)
 
     supervised_training(
-        name="actin-deepict-run1",
+        name="actin-deepict-run2",
         label_key="/labels/actin",
         patch_shape=patch_shape,
         train_paths=train_paths,
         val_paths=val_paths,
         sampler=sampler,
         batch_size=4,
-        lr=1e-4,
+        lr=4e-4,
         n_iterations=25000,
         save_root=str(out_dir),
         check = False
@@ -32,7 +32,7 @@ def main():
     train_paths = [str(p) for p in train_dir.glob("*.h5")]
     val_paths = [str(p) for p in val_dir.glob("*.h5")]
 
-    out_dir = Path("/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/out/deepict/run1")
+    out_dir = Path("/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/out/deepict/run2")
     actin_supervised_training(train_paths, val_paths, out_dir)
 
 
