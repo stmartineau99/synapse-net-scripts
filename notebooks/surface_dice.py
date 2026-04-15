@@ -1,45 +1,25 @@
 #!/bin/env python3
-import sys
 import os
-
-# Add membrain-seg to Python path 
-MEMBRAIN_SEG_PATH = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/source/membrain-seg/src"
-if MEMBRAIN_SEG_PATH not in sys.path:
-    sys.path.insert(0, MEMBRAIN_SEG_PATH)
-
 import argparse
+
 import h5py
-import pandas as pd
-from tqdm import tqdm
 import numpy as np
+import pandas as pd
+import torch
+import torch.nn.functional as F
 from scipy.ndimage import label
 from skimage.measure import regionprops
+from tqdm import tqdm
 
+from membrain_seg.benchmark.metrics import masked_surface_dice
 
-try:
-    from membrain_seg.segmentation.skeletonize import skeletonization
-    from membrain_seg.benchmark.metrics import masked_surface_dice
-except ImportError:
-    raise ImportError("membrain_seg not found in path. Download source code:" \
-    "https://github.com/teamtomo/membrain-seg/tree/main/src/membrain_seg")
-    exit()
 
 class SoftSkeletonize(torch.nn.Module):
-    """`SoftSkeletonize` is a differentiable approximation for skeletonization,
-        which applies iterative min- and max-pooling as a proxy for
-        morphological erosion and dilation.
-
-    Args:
-        num_iter: Number of iterations for soft-skeletonization.
-            Should be greater or equal to than the maximum observed radius.
-    """
     def __init__(self, num_iter: int = 5):
-
         super(SoftSkeletonize, self).__init__()
         self.num_iter = num_iter
 
     def soft_erode(self, input_: torch.Tensor):
-
         if len(input_.shape) == 4:
             p1 = -F.max_pool2d(-input_, (3, 1), (1, 1), (1, 0))
             p2 = -F.max_pool2d(-input_, (1, 3), (1, 1), (0, 1))
@@ -51,48 +31,50 @@ class SoftSkeletonize(torch.nn.Module):
             return torch.min(torch.min(p1, p2), p3)
 
     def soft_dilate(self, input_: torch.Tensor):
-
         if len(input_.shape) == 4:
             return F.max_pool2d(input_, (3, 3), (1, 1), (1, 1))
         elif len(input_.shape) == 5:
             return F.max_pool3d(input_, (3, 3, 3), (1, 1, 1), (1, 1, 1))
 
     def soft_open(self, input_: torch.Tensor):
-
         return self.soft_dilate(self.soft_erode(input_))
 
     def soft_skel(self, input_: torch.Tensor):
-
         input1 = self.soft_open(input_)
         skel = F.relu(input1)
-
         for j in range(self.num_iter):
             input_ = self.soft_erode(input_)
             input1 = self.soft_open(input_)
-            delta = F.relu(input_-input1)
+            delta = F.relu(input_ - input1)
             skel = skel + F.relu(delta - skel * delta)
-
         return skel
+
+    def forward(self, input_: torch.Tensor):
+        return self.soft_skel(input_)
+
+def skeletonize(arr):
+    soft_skel = SoftSkeletonize(num_iter=5)
+    t = torch.from_numpy(arr).float().unsqueeze(0).unsqueeze(0)
+    with torch.no_grad():
+        skel = soft_skel(t)
+    return skel.squeeze().numpy()
+
 
 def load_segmentation(file_path, key):
     with h5py.File(file_path, "r") as f:
         data = f[key][:]
     return data
 
+
 def evaluate_surface_dice(pred, gt, raw, check):
-    gt_skeleton = skeletonization(gt == 1, batch_size=100000)
-    pred_skeleton = skeletonization(pred, batch_size=100000)
+    gt_skeleton = skeletonize(gt.astype(np.float32))
+    pred_skeleton = skeletonize(pred.astype(np.float32))
     mask = gt != 2
 
     if check:
         import napari
         v = napari.Viewer()
-        #v.add_image(raw)
-        v.add_labels(gt, name="gt")
-        v.add_labels(gt_skeleton.astype(np.uint16), name="gt_skeleton")
-        #v.add_labels(pred, name="pred")
-        #v.add_labels(pred_skeleton.astype(np.uint16), name="pred_skeleton")
-    
+        v.add_image(gt_skeleton, name="gt_skeleton")
         napari.run()
 
     surf_dice, confusion_dict = masked_surface_dice(
@@ -102,7 +84,7 @@ def evaluate_surface_dice(pred, gt, raw, check):
 
 
 def process_file(pred_path, gt_path, seg_key, gt_key, check,
-                 min_bb_shape=(64, 384, 384), min_thinning_size=2500,
+                 min_bb_shape=(64, 384, 384), min_thinning_size=0,
                  global_eval=False):
     try:
         pred = load_segmentation(pred_path, seg_key)
@@ -116,7 +98,7 @@ def process_file(pred_path, gt_path, seg_key, gt_key, check,
             dice, confusion = evaluate_surface_dice(pred_bin, gt_bin, raw, check)
             return [{
                 "tomo_name": os.path.basename(pred_path),
-                "gt_component_id": -1,  # -1 indicates global eval
+                "gt_component_id": -1,
                 "surface_dice": dice,
                 **confusion
             }]
@@ -173,7 +155,7 @@ def process_file(pred_path, gt_path, seg_key, gt_key, check,
 
 
 def collect_results(input_folder, gt_folder, model_name, check=False,
-                    min_bb_shape=(64, 384, 384), min_thinning_size=200,
+                    min_bb_shape=(64, 384, 384), min_thinning_size=0,
                     global_eval=False):
     results = []
     seg_key = f"/segmentations/{model_name}"
@@ -211,13 +193,11 @@ def save_results(results, output_file):
 
     if os.path.exists(output_file):
         existing_df = pd.read_excel(output_file)
-
         combined_df = existing_df[
             ~existing_df.set_index(["tomo_name", "input_folder", "gt_component_id"]).index.isin(
                 new_df.set_index(["tomo_name", "input_folder", "gt_component_id"]).index
             )
         ]
-
         final_df = pd.concat([combined_df, new_df], ignore_index=True)
     else:
         final_df = new_df
@@ -227,7 +207,9 @@ def save_results(results, output_file):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Compute surface dice per GT component or globally for actin segmentations.")
+    parser = argparse.ArgumentParser(
+        description="Compute surface dice per GT component or globally for actin segmentations."
+    )
     parser.add_argument("--input_folder", "-i", required=True, help="Folder with predicted segmentations (.h5)")
     parser.add_argument("--gt_folder", "-gt", required=True, help="Folder with ground truth segmentations (.h5)")
     parser.add_argument("--model_name", "-m", required=True, help="Model name string used in prediction key")
@@ -240,7 +222,7 @@ def main():
     min_thinning_size = 0
 
     suffix = "global" if args.global_eval else "per_gt_component"
-  
+
     output_file = f"./evaluation_results/{args.model_name}_surface_dice_{suffix}.xlsx"
     output_dir = os.path.dirname(output_file)
     os.makedirs(output_dir, exist_ok=True)
@@ -256,7 +238,6 @@ def main():
     )
 
     save_results(results, output_file)
-
 
 if __name__ == "__main__":
     main()
