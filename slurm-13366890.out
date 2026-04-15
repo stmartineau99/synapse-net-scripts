@@ -1,0 +1,115 @@
+================================================================================
+JobID = 13366890
+User = u25914, Account = nim00020
+Partition = large96s, Nodelist = cm0003
+================================================================================
+
+Writing train split for condition 0 (14 tomograms)...
+tomogram_0_0 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_0_0.h5.
+tomogram_0_1 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_0_1.h5.
+tomogram_0_2 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_0_2.h5.
+tomogram_0_3 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_0_3.h5.
+tomogram_0_4 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_0_4.h5.
+tomogram_0_5 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_0_5.h5.
+tomogram_0_6 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_0_6.h5.
+tomogram_0_7 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_0_7.h5.
+tomogram_0_8 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_0_8.h5.
+tomogram_0_9 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_0_9.h5.
+tomogram_0_10 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_0_10.h5.
+tomogram_0_11 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_0_11.h5.
+tomogram_0_12 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_0_12.h5.
+tomogram_0_13 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_0_13.h5.
+
+Writing val split for condition 0 (4 tomograms)...
+tomogram_0_14 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_0_14.h5.
+tomogram_0_15 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_0_15.h5.
+tomogram_0_16 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_0_16.h5.
+tomogram_0_17 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_0_17.h5.
+
+Writing test split for condition 0 (2 tomograms)...
+tomogram_0_18 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/test/tomogram_0_18.h5.
+tomogram_0_19 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/test/tomogram_0_19.h5.
+
+Writing train split for condition 1 (14 tomograms)...
+tomogram_1_0 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_1_0.h5.
+tomogram_1_1 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_1_1.h5.
+tomogram_1_2 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_1_2.h5.
+tomogram_1_3 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_1_3.h5.
+tomogram_1_4 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_1_4.h5.
+tomogram_1_5 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_1_5.h5.
+tomogram_1_6 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_1_6.h5.
+tomogram_1_7 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_1_7.h5.
+tomogram_1_8 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_1_8.h5.
+tomogram_1_9 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_1_9.h5.
+tomogram_1_10 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_1_10.h5.
+tomogram_1_11 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_1_11.h5.
+tomogram_1_12 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_1_12.h5.
+tomogram_1_13 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_1_13.h5.
+
+Writing val split for condition 1 (4 tomograms)...
+tomogram_1_14 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_1_14.h5.
+tomogram_1_15 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_1_15.h5.
+tomogram_1_16 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_1_16.h5.
+tomogram_1_17 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_1_17.h5.
+
+Writing test split for condition 1 (2 tomograms)...
+tomogram_1_18 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/test/tomogram_1_18.h5.
+tomogram_1_19 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/test/tomogram_1_19.h5.
+
+Writing train split for condition 2 (14 tomograms)...
+tomogram_2_0 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_2_0.h5.
+tomogram_2_1 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_2_1.h5.
+tomogram_2_2 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_2_2.h5.
+tomogram_2_3 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_2_3.h5.
+tomogram_2_4 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_2_4.h5.
+tomogram_2_5 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_2_5.h5.
+tomogram_2_6 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_2_6.h5.
+tomogram_2_7 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_2_7.h5.
+tomogram_2_8 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_2_8.h5.
+tomogram_2_9 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_2_9.h5.
+tomogram_2_10 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_2_10.h5.
+tomogram_2_11 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_2_11.h5.
+tomogram_2_12 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_2_12.h5.
+tomogram_2_13 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_2_13.h5.
+
+Writing val split for condition 2 (4 tomograms)...
+tomogram_2_14 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_2_14.h5.
+tomogram_2_15 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_2_15.h5.
+tomogram_2_16 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_2_16.h5.
+tomogram_2_17 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_2_17.h5.
+
+Writing test split for condition 2 (2 tomograms)...
+tomogram_2_18 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/test/tomogram_2_18.h5.
+tomogram_2_19 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/test/tomogram_2_19.h5.
+
+Writing train split for condition 3 (16 tomograms)...
+tomogram_3_0 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_0.h5.
+tomogram_3_1 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_1.h5.
+tomogram_3_2 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_2.h5.
+tomogram_3_3 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_3.h5.
+tomogram_3_4 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_4.h5.
+tomogram_3_5 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_5.h5.
+tomogram_3_6 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_6.h5.
+tomogram_3_7 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_7.h5.
+tomogram_3_8 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_8.h5.
+tomogram_3_9 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_9.h5.
+tomogram_3_10 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_10.h5.
+tomogram_3_11 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_11.h5.
+tomogram_3_12 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_12.h5.
+tomogram_3_13 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_13.h5.
+tomogram_3_14 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_14.h5.
+tomogram_3_15 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/train/tomogram_3_15.h5.
+
+Writing val split for condition 3 (4 tomograms)...
+tomogram_3_16 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_3_16.h5.
+tomogram_3_17 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_3_17.h5.
+tomogram_3_18 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_3_18.h5.
+tomogram_3_19 saved to /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/deepict_dataset_4/val/tomogram_3_19.h5.
+============ Job Information ===================================================
+Submitted: 2026-04-13T22:35:52
+Started: 2026-04-13T22:35:54
+Ended: 2026-04-13T23:05:01
+Elapsed: 30 min, Limit: 120 min, Difference: 90 min
+CPUs: 8, Nodes: 1
+Estimated Consumption: 4.00 core-hours
+================================================================================

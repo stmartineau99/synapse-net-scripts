@@ -1,0 +1,17 @@
+================================================================================
+JobID = 13362425
+User = u25914, Account = nim00020
+Partition = grete:shared, Nodelist = ggpu142
+================================================================================
+Traceback (most recent call last):
+  File "/mnt/vast-nhr/projects/nim00020/sage/synapse-net-scripts/experiments/deepict/run7/train_actin_segmentation.py", line 4, in <module>
+    from torch_em.loss.cldice import CombinedclDiceLoss
+ModuleNotFoundError: No module named 'torch_em.loss.cldice'
+============ Job Information ===================================================
+Submitted: 2026-04-13T16:30:25
+Started: 2026-04-13T19:12:20
+Ended: 2026-04-13T19:12:55
+Elapsed: 1 min, Limit: 1440 min, Difference: 1439 min
+CPUs: 18, Nodes: 1
+Estimated Consumption: 2.50 core-hours
+================================================================================

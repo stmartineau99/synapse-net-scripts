@@ -17,9 +17,9 @@ def actin_supervised_training(train_paths, val_paths, out_dir):
         train_paths=train_paths,
         val_paths=val_paths,
         sampler=sampler,
-        batch_size=2,
-        lr=1e-2,
-        n_iterations=50000,
+        batch_size=4,
+        lr=4e-4,
+        n_iterations=25000,
         save_root=str(out_dir),
         check=False
     )
@@ -34,7 +34,6 @@ def main():
 
     out_dir = Path("/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/out/synapse/run2")
     actin_supervised_training(train_paths, val_paths, out_dir)
-
 
 if __name__ == "__main__":
     main()

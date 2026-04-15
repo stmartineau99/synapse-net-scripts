@@ -1,0 +1,17 @@
+================================================================================
+JobID = 13374090
+User = u25914, Account = nim00020
+Partition = large96s, Nodelist = cm0005
+================================================================================
+  File "/mnt/vast-nhr/projects/nim00020/sage/synapse-net-scripts/experiments/synapse/run2/prepare_training_data.py", line 8
+    parent_dir = Path("/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/simulation/synapse_dataset_1)
+                      ^
+SyntaxError: unterminated string literal (detected at line 8)
+============ Job Information ===================================================
+Submitted: 2026-04-14T16:43:54
+Started: 2026-04-14T16:43:55
+Ended: 2026-04-14T16:43:59
+Elapsed: 1 min, Limit: 240 min, Difference: 239 min
+CPUs: 8, Nodes: 1
+Estimated Consumption: 0.13 core-hours
+================================================================================
