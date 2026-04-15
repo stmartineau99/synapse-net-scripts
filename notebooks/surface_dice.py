@@ -1,6 +1,12 @@
 #!/bin/env python3
+import sys
 import os
 import argparse
+
+# Add membrain-seg to Python path
+MEMBRAIN_SEG_PATH = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/source/membrain-seg/src"
+if MEMBRAIN_SEG_PATH not in sys.path:
+    sys.path.insert(0, MEMBRAIN_SEG_PATH)
 
 import h5py
 import numpy as np
