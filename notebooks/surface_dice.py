@@ -17,8 +17,12 @@ from scipy.ndimage import label
 from skimage.measure import regionprops
 from tqdm import tqdm
 
-from membrain_seg.benchmark.metrics import masked_surface_dice
-
+try:
+    from membrain_seg.benchmark.metrics import masked_surface_dice
+except ImportError:
+    raise ImportError("membrain_seg not found in path. Download source code:" \
+    "https://github.com/teamtomo/membrain-seg/tree/main/src/membrain_seg")
+    exit()
 
 class SoftSkeletonize(torch.nn.Module):
     def __init__(self, num_iter: int = 5):
@@ -80,8 +84,14 @@ def evaluate_surface_dice(pred, gt, raw, check):
     if check:
         import napari
         v = napari.Viewer()
-        v.add_image(gt_skeleton, name="gt_skeleton")
+        v.add_image(raw)
+        v.add_labels(gt, name="gt")
+        v.add_labels(gt_skeleton.astype(np.uint16), name="gt_skeleton")
+        v.add_labels(pred, name="pred")
+        v.add_labels(pred_skeleton.astype(np.uint16), name="pred_skeleton")
+    
         napari.run()
+
 
     surf_dice, confusion_dict = masked_surface_dice(
         pred_skeleton, gt_skeleton, pred, gt, mask
