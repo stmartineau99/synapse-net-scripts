@@ -152,7 +152,9 @@ def process_file(pred_path, gt_path, seg_key, gt_key, check,
             try:
                 dice, confusion = evaluate_surface_dice(pred_crop, gt_crop, raw_crop, check)
             except Exception as e:
+                import traceback
                 print(f"Error computing Dice for GT component {comp_id} in {pred_path}: {e}")
+                traceback.print_exc()
                 continue
 
             result = {
@@ -166,7 +168,9 @@ def process_file(pred_path, gt_path, seg_key, gt_key, check,
         return results
 
     except Exception as e:
+        import traceback
         print(f"Error processing {pred_path}: {e}")
+        traceback.print_exc()
         return []
 
 
@@ -205,10 +209,14 @@ def collect_results(input_folder, gt_folder, model_name, check=False,
 
 
 def save_results(results, output_file):
+    if not results:
+        print("No results to save.")
+        return
+
     new_df = pd.DataFrame(results)
 
     if os.path.exists(output_file):
-        existing_df = pd.read_excel(output_file)
+        existing_df = pd.read_csv(output_file)
         combined_df = existing_df[
             ~existing_df.set_index(["tomo_name", "input_folder", "gt_component_id"]).index.isin(
                 new_df.set_index(["tomo_name", "input_folder", "gt_component_id"]).index
@@ -218,7 +226,7 @@ def save_results(results, output_file):
     else:
         final_df = new_df
 
-    final_df.to_excel(output_file, index=False)
+    final_df.to_csv(output_file, index=False)
     print(f"Results saved to {output_file}")
 
 
@@ -239,7 +247,7 @@ def main():
 
     suffix = "global" if args.global_eval else "per_gt_component"
 
-    output_file = f"./evaluation_results/{args.model_name}_surface_dice_{suffix}.xlsx"
+    output_file = f"./evaluation_results/{args.model_name}_surface_dice_{suffix}.csv"
     output_dir = os.path.dirname(output_file)
     os.makedirs(output_dir, exist_ok=True)
 
