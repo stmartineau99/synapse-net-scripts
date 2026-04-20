@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -p grete:shared
-#SBATCH --job-name=predict_actin_run8
+#SBATCH --job-name=predict_synapse_run2
 #SBATCH -o /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/slurm-%j_%x.out
 #SBATCH -t 2:00:00
 #SBATCH --nodes=1
@@ -12,7 +12,7 @@
 source ~/.bashrc
 micromamba activate synapse-net
 
-SCRIPT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/experiments/deepict/run8
+SCRIPT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/experiments/synapse/run2
 
 cd $SCRIPT_DIR
 
