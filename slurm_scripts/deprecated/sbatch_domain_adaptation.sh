@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -p grete:shared
-#SBATCH --job-name=domain_adaptation
+#SBATCH --job-name=deepict_run8
 #SBATCH -o /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/slurm-%j_%x.out
 #SBATCH -t 48:00:00
 #SBATCH --nodes=1
@@ -12,8 +12,16 @@
 source ~/.bashrc
 micromamba activate synapse-net
 
-SCRIPT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/pipeline_scripts
+export TMPDIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/tmp_$SLURM_JOB_ID
+mkdir -p $TMPDIR
+
+echo $TMPDIR
+df -h $TMPDIR
+
+SCRIPT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/experiments/deepict/run8
 
 cd $SCRIPT_DIR
 
-python domain_adaptation.py --config $1
+python train_domain_adaptation.py
+
+rm -r $TMPDIR

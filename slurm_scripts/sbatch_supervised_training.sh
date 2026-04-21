@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -p grete:shared
-#SBATCH --job-name=synapse_run2
+#SBATCH --job-name=supervised_training
 #SBATCH -o /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/slurm-%j_%x.out
 #SBATCH -t 24:00:00
 #SBATCH --nodes=1
@@ -12,8 +12,8 @@
 source ~/.bashrc
 micromamba activate synapse-net
 
-SCRIPT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/experiments/synapse/run2
+SCRIPT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/pipeline_scripts
 
 cd $SCRIPT_DIR
 
-python train_actin_segmentation.py
+python supervised_training.py --config $1

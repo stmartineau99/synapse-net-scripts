@@ -1,1 +1,3 @@
 *.png
+slurm-*.out
+*_metrics.json
