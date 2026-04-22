@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # toggle on/off
-RUN_PREPARE=true
-RUN_SUPERVISED=false
+RUN_PREPARE=false
+RUN_SUPERVISED=true
 RUN_DOMAIN_ADAPTATION=false
 
 PARENT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts
@@ -12,7 +12,7 @@ LOG_DIR=$PARENT_DIR/slurm_logs
 JSON_DIR=$PARENT_DIR/slurm_metrics
 mkdir -p $LOG_DIR $JSON_DIR
 
-CONFIG=$PARENT_DIR/configs/deepict/deepict-run12.toml
+CONFIG=$PARENT_DIR/configs/deepict/deepict_run14.toml
 CONFIG_NAME=$(basename $CONFIG .toml)
 
 submit_job() {
@@ -48,14 +48,17 @@ submit_job() {
 JOB1_ID=""
 JOB2_ID=""
 
-[[ "$RUN_PREPARE" == true ]] && \
+if [[ "$RUN_PREPARE" == true ]]; then
     JOB1_ID=$(submit_job "prepare_${CONFIG_NAME}" \
         $SCRIPT_DIR/sbatch_prepare_training.sh $CONFIG "") || exit 1
+fi
 
-[[ "$RUN_SUPERVISED" == true ]] && \
+if [[ "$RUN_SUPERVISED" == true ]]; then
     JOB2_ID=$(submit_job "SL_${CONFIG_NAME}" \
         $SCRIPT_DIR/sbatch_supervised_training.sh $CONFIG $JOB1_ID) || exit 1
+fi
 
-[[ "$RUN_DOMAIN_ADAPTATION" == true ]] && \
+if [[ "$RUN_DOMAIN_ADAPTATION" == true ]]; then
     JOB3_ID=$(submit_job "UDA_${CONFIG_NAME}" \
         $SCRIPT_DIR/sbatch_domain_adaptation.sh $CONFIG $JOB2_ID) || exit 1
+fi

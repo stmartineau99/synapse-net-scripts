@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -p grete:shared
-#SBATCH --job-name=predict_synapse_run2
+#SBATCH --job-name=predict_atin
 #SBATCH -o /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/slurm-%j_%x.out
 #SBATCH -t 2:00:00
 #SBATCH --nodes=1
@@ -12,8 +12,10 @@
 source ~/.bashrc
 micromamba activate synapse-net
 
-SCRIPT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/experiments/synapse/run2
+CKPT=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/out/deepict/run13/checkpoints/actin-deepict-run13
+
+SCRIPT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/pipeline_scripts/inference
 
 cd $SCRIPT_DIR
 
-python predict_actin_experimental.py
+python predict_actin_deepict.py --checkpoint $CKPT

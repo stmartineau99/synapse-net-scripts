@@ -1,5 +1,4 @@
 import h5py
-import torch_em
 import configargparse
 from pathlib import Path
 from synapse_net.file_utils import read_mrc
@@ -22,7 +21,6 @@ def parse_args():
     parser.add_argument("--run", type=int, required=True)
 
     # prepare_training
-    parser.add_argument("--mode", type=str, default="synthetic")
     parser.add_argument("--n_conditions", type=int, default=1)
     parser.add_argument("--n_tomos", type=int, required=True)
     parser.add_argument("--conditions", type=int, nargs="*", default=None)
@@ -32,14 +30,12 @@ def parse_args():
     parser.add_argument("--raw_key", type=str, default="raw")
     parser.add_argument("--label_key", type=str, default="/labels/actin")
 
-    # real mode
-    parser.add_argument("--target_voxel_size", type=float, default=0)
-    parser.add_argument("--sample_mask_dir", type=str, default=None)
-    parser.add_argument("--sample_mask_key", type=str, default="sample_mask")
-
     return parser.parse_args()
 
-def prepare_synthetic(args):
+
+def main():
+    args = parse_args()
+
     TOMO_PATTERN = "train_dir_{c}/faket_tomograms/tomogram_{c}_{i}_faket.mrc"
     LABEL_PATTERN = "simulation_dir_{c}/tomos/tomo_actin_mask_{i}.mrc"
 
@@ -84,49 +80,6 @@ def prepare_synthetic(args):
                     f.create_dataset(args.label_key, data=labels, compression="gzip")
 
                 print(f"  Saved {out_path.name}")
-
-
-def prepare_real(args):
-    data_dir = Path(args.data_root) / "experimental" / args.real_dataset / "raw"
-    out_dir = Path(args.data_root) / "experimental" / args.real_dataset / "h5"
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    mask_dir = Path(args.sample_mask_dir) if args.sample_mask_dir \
-        else Path(args.data_root) / "experimental" / args.real_dataset / "sample_masks"
-
-    data_paths = sorted(data_dir.glob("*.mrc"))
-    mask_paths = sorted(mask_dir.glob("*.mrc")) if mask_dir.exists() else [None] * len(data_paths)
-
-    for data_path, mask_path in zip(data_paths, mask_paths):
-        raw, source_vsize = read_mrc(data_path)
-
-        if args.target_voxel_size > 0:
-            scale = tuple(
-                source_vsize[ax] / (args.target_voxel_size / 10) for ax in ("z", "y", "x")
-            )
-            raw = torch_em.transform.generic.Rescale(scale)(raw)
-
-        out_path = out_dir / f"{data_path.stem}.h5"
-        with h5py.File(out_path, "w") as f:
-            f.create_dataset(args.raw_key, data=raw, compression="gzip")
-
-            if mask_path is not None:
-                mask, _ = read_mrc(mask_path)
-                if args.target_voxel_size > 0:
-                    mask = torch_em.transform.generic.Rescale(scale, is_label=True)(mask)
-                f.create_dataset(args.sample_mask_key, data=mask, compression="gzip")
-
-        print(f"Saved {out_path.name}.")
-
-def main():
-    args = parse_args()
-
-    if args.mode == "synthetic":
-        prepare_synthetic(args)
-    elif args.mode == "real":
-        prepare_real(args)
-    else:
-        raise ValueError(f"Unknown mode: {args.mode!r}")
 
 
 if __name__ == "__main__":

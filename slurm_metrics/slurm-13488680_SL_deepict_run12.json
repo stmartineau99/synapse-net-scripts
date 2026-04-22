@@ -1,0 +1,19 @@
+{
+    "job_id": "13488680",
+    "job_name": "SL_deepict_run12",
+    "submit": "2026-04-21T22:30:05",
+    "is_array": false,
+    "tasks": [
+        {
+            "task_id": "13488680",
+            "array_task_id": null,
+            "submit": "2026-04-21T22:30:05",
+            "elapsed": "05:59:48",
+            "total_cpu": "20:08:27",
+            "alloc_cpus": "18",
+            "req_mem": "40G",
+            "max_rss": "24.54G",
+            "state": "COMPLETED"
+        }
+    ]
+}
