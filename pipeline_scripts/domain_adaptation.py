@@ -42,6 +42,8 @@ def main():
         Path(args.data_root) / "training" / "out"
         / args.real_dataset / f"run{args.run}-adapted"
     )
+    if args.check:
+        args.batch_size = 1
     n_iterations = 100_000 // args.batch_size
 
     if args.source_checkpoint:

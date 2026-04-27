@@ -12,14 +12,14 @@
 source ~/.bashrc
 micromamba activate synapse-net
 
-RUNS=(run15)
+RUNS=(run16)
 
-CKPT_BASE=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/out/deepict
-SCRIPT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/pipeline_scripts/inference
+PARENT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/
+CONFIG_DIR=$PARENT_DIR/configs/deepict
+SCRIPT_DIR=$PARENT_DIR/pipeline_scripts
 
 cd $SCRIPT_DIR
 
 for RUN in "${RUNS[@]}"; do
-    CKPT=$CKPT_BASE/$RUN/checkpoints/actin-deepict-$RUN
-    python predict_actin_deepict.py --checkpoint $CKPT
+    python predict_actin_synthetic.py --config $CONFIG_DIR/deepict_${RUN}.toml
 done

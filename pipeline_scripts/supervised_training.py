@@ -30,6 +30,8 @@ def parse_args():
     parser.add_argument("--lr", type=float, default=4e-4)
     parser.add_argument("--loss_fn", type=str, default=None)
     parser.add_argument("--conditions", type=int, nargs="*", default=None)
+    parser.add_argument("--n_iterations", type=int, default=50_000)
+    parser.add_argument("--save_every_kth_epoch", type=int, default=None)
     parser.add_argument("--check", action="store_true", default=False)
 
     return parser.parse_args()
@@ -50,7 +52,8 @@ def main():
         Path(args.data_root) / "training" / "out"
         / args.real_dataset / f"run{args.run}"
     )
-    n_iterations = 100_000 // args.batch_size
+    if args.check:
+        args.batch_size = 1
 
     train_paths = sorted(
         str(p) for p in (train_data_dir / "train").glob("*.h5")
@@ -66,6 +69,10 @@ def main():
     sampler = MinForegroundSampler(min_fraction=0.025, p_reject=0.95)
     loss_fn = getattr(torch_em.loss, args.loss_fn)() if args.loss_fn else None
 
+    trainer_kwargs = {}
+    if args.save_every_kth_epoch is not None:
+        trainer_kwargs["save_every_kth_epoch"] = args.save_every_kth_epoch
+
     supervised_training(
         name=run_name,
         label_key=args.label_key,
@@ -76,9 +83,10 @@ def main():
         batch_size=args.batch_size,
         lr=args.lr,
         loss_fn=loss_fn,
-        n_iterations=n_iterations,
+        n_iterations=args.n_iterations,
         save_root=str(out_dir),
         check=args.check,
+        trainer_kwargs=trainer_kwargs or None,
     )
 
 

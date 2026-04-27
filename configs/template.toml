@@ -22,6 +22,7 @@ label_key = "/labels/actin"
 patch_shape = [64, 256, 256]
 batch_size = 4
 lr = 4e-4
+n_iterations = 50_000
 # loss_fn = "DiceLoss"                  # optional; defaults to DiceLoss
 
 [domain_adaptation]

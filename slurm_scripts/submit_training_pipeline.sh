@@ -12,7 +12,7 @@ LOG_DIR=$PARENT_DIR/slurm_logs
 JSON_DIR=$PARENT_DIR/slurm_metrics
 mkdir -p $LOG_DIR $JSON_DIR
 
-CONFIG=$PARENT_DIR/configs/deepict/deepict_run14.toml
+CONFIG=$PARENT_DIR/configs/deepict/deepict_run16.toml
 CONFIG_NAME=$(basename $CONFIG .toml)
 
 submit_job() {

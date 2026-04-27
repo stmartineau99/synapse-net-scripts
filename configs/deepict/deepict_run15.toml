@@ -2,13 +2,13 @@
 
 [run_info]
 data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
-synthetic_dataset = "deepict_dataset_4"                                     # simulated dataset
+synthetic_dataset = "deepict_dataset_5"                                     # simulated dataset
 real_dataset = "deepict"                                                    # target experimental dataset
-run = 13
+run = 15
 
 [prepare_training]
 n_conditions = 4
-n_tomos = 20
+n_tomos = 15
 # conditions = [0, 1, 2, 3]             # optional; defaults to range(n_conditions)
 train_fraction = 0.7
 val_fraction = 0.2
@@ -17,13 +17,13 @@ raw_key = "raw"
 label_key = "/labels/actin"
 
 [supervised_training]
-# conditions = [0, 1, 2]               # optional; select a subset of conditions for training
-n_iterations = 50_000
-save_every_kth_epoch = 10
+# conditions = [0, 1, 2, 3]              # optional; select a subset of conditions for training
 label_key = "/labels/actin"
 patch_shape = [64, 256, 256]
 batch_size = 4
 lr = 4e-4
+n_iterations = 50_000
+save_every_kth_epoch = 10
 # loss_fn = "DiceLoss"                  # optional; defaults to DiceLoss
 
 [domain_adaptation]

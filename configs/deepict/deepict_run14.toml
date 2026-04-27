@@ -22,7 +22,9 @@ label_key = "/labels/actin"
 patch_shape = [64, 256, 256]
 batch_size = 2
 lr = 2e-4
-loss_fn = "CombinedclDiceLoss"         
+loss_fn = "CombinedclDiceLoss"
+n_iterations = 50_000
+save_every_kth_epoch = 10
 
 [domain_adaptation]
 # source_checkpoint = "/override/checkpoint/path"
