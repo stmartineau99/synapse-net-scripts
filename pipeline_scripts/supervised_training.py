@@ -33,6 +33,10 @@ def parse_args():
     parser.add_argument("--n_iterations", type=int, default=50_000)
     parser.add_argument("--save_every_kth_epoch", type=int, default=None)
     parser.add_argument("--check", action="store_true", default=False)
+    parser.add_argument(
+        "--experimental_val_paths", type=str, nargs="*", default=None,
+        help="If provided, use these H5 files as the validation set instead of synthetic val split."
+    )
 
     return parser.parse_args()
 
@@ -66,12 +70,12 @@ def main():
         train_paths = filter_by_conditions(train_paths, args.conditions)
         val_paths = filter_by_conditions(val_paths, args.conditions)
 
-    sampler = MinForegroundSampler(min_fraction=0.025, p_reject=0.95)
-    loss_fn = getattr(torch_em.loss, args.loss_fn)() if args.loss_fn else None
+    if args.experimental_val_paths:
+        train_paths = train_paths + val_paths
+        val_paths = args.experimental_val_paths
 
-    trainer_kwargs = {}
-    if args.save_every_kth_epoch is not None:
-        trainer_kwargs["save_every_kth_epoch"] = args.save_every_kth_epoch
+    sampler = MinForegroundSampler(min_fraction=0.01, p_reject=1.0)
+    loss_fn = getattr(torch_em.loss, args.loss_fn)() if args.loss_fn else None
 
     supervised_training(
         name=run_name,
@@ -86,7 +90,7 @@ def main():
         n_iterations=args.n_iterations,
         save_root=str(out_dir),
         check=args.check,
-        trainer_kwargs=trainer_kwargs or None,
+        save_every_kth_epoch=args.save_every_kth_epoch,
     )
 
 

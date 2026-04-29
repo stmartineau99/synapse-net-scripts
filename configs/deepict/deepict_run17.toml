@@ -1,0 +1,38 @@
+# actin unsupervised domain adapation pipeline
+
+[run_info]
+data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
+synthetic_dataset = "deepict_dataset_5"                                     # simulated dataset
+real_dataset = "deepict"                                                    # target experimental dataset
+run = 17
+
+[prepare_training]
+n_conditions = 4
+n_tomos = 15
+# conditions = [0, 1, 2, 3]             # optional; defaults to range(n_conditions)
+train_fraction = 0.7
+val_fraction = 0.2
+test_fraction = 0.1
+raw_key = "raw"
+label_key = "/labels/actin"
+
+[supervised_training]
+# conditions = [0, 1, 2, 3]             # optional; select a subset of conditions for training
+label_key = "/labels/actin"
+patch_shape = [64, 256, 256]
+batch_size = 4
+lr = 4e-4
+n_iterations = 50_000
+save_every_kth_epoch = 10
+# loss_fn = "DiceLoss"                              # optional; defaults to DiceLoss
+experimental_val_paths = ["/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/predictions/deepict/00012.h5"]
+
+[domain_adaptation]
+# source_checkpoint = "/override/checkpoint/path"
+train_glob = "*.h5" #TODO fix this
+val_glob = "*.h5"   #TODO fix this
+raw_key = "raw"
+sample_mask_key = "sample_mask"
+patch_shape = [64, 256, 256]
+batch_size = 2
+lr = 2e-4

@@ -3,6 +3,7 @@ from pathlib import Path
 from synapse_net.training.domain_adaptation import mean_teacher_adaptation
 from torch_em.data.sampler import MinForegroundSampler
 
+
 def parse_args():
     parser = configargparse.ArgParser(
         config_file_parser_class=configargparse.TomlConfigParser(

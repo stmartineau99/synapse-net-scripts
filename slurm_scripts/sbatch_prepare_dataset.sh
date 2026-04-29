@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -p large96s
-#SBATCH --job-name=prepare_training
+#SBATCH --job-name=prepare_deepict
 #SBATCH -o ./slurm-%j.out
 #SBATCH -t 4:00:00
 #SBATCH --nodes=1
