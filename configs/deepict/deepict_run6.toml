@@ -1,0 +1,26 @@
+# actin supervised training pipeline
+# documentation-only config reconstructed from old/experiments/deepict/run6/
+
+[run_info]
+data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
+synthetic_dataset = "deepict_dataset_3"                                     # simulated dataset
+real_dataset = "deepict"                                                    # target experimental dataset
+run = 6
+
+[prepare_training]
+n_conditions = 3
+n_tomos = 20
+conditions = [0, 1, 2]
+train_fraction = 0.7
+val_fraction = 0.2
+test_fraction = 0.1
+raw_key = "raw"
+label_key = "/labels/actin"
+
+[supervised_training]
+conditions = [0, 1, 2]
+label_key = "/labels/actin"
+patch_shape = [64, 384, 384]
+batch_size = 4
+lr = 1e-4
+n_iterations = 25_000

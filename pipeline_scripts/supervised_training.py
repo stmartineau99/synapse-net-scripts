@@ -32,6 +32,7 @@ def parse_args():
     parser.add_argument("--conditions", type=int, nargs="*", default=None)
     parser.add_argument("--n_iterations", type=int, default=50_000)
     parser.add_argument("--save_every_kth_epoch", type=int, default=None)
+    parser.add_argument("--percentile_norm", action="store_true", default=False)
     parser.add_argument("--check", action="store_true", default=False)
     parser.add_argument(
         "--experimental_val_paths", type=str, nargs="*", default=None,
@@ -74,7 +75,7 @@ def main():
         train_paths = train_paths + val_paths
         val_paths = args.experimental_val_paths
 
-    sampler = MinForegroundSampler(min_fraction=0.01, p_reject=1.0)
+    sampler = MinForegroundSampler(min_fraction=0.025, p_reject=0.95)
     loss_fn = getattr(torch_em.loss, args.loss_fn)() if args.loss_fn else None
 
     supervised_training(
@@ -91,6 +92,7 @@ def main():
         save_root=str(out_dir),
         check=args.check,
         save_every_kth_epoch=args.save_every_kth_epoch,
+        percentile_norm=args.percentile_norm,
     )
 
 
