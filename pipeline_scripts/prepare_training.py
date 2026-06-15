@@ -79,6 +79,8 @@ def main():
                     f.create_dataset(args.raw_key, data=tomo, compression="gzip")
                     f.create_dataset(args.label_key, data=labels, compression="gzip")
 
+                del tomo, labels
+
                 print(f"  Saved {out_path.name}")
 
 

@@ -1,11 +1,15 @@
+import os
+import random
 import h5py
 import numpy as np
 from pathlib import Path
 
 KEYS = ["raw", "labels/actin", "sample_mask"]
-TRAIN_FRACTION = 0.7
-VAL_FRACTION = 0.2
-TEST_FRACTION = 0.1
+N_QUADRANTS = 4
+TRAIN_FRACTION = 0.5
+VAL_FRACTION = 0.25
+TEST_FRACTION = 0.25
+SEED = 42
 
 
 def get_quadrant_slices(y, x):
@@ -17,49 +21,64 @@ def get_quadrant_slices(y, x):
         (slice(y_mid, None), slice(x_mid, None)),
     ]
 
+def create_symlink(src_path: Path, dest_path: Path) -> None:
+    if dest_path.is_symlink():
+        print(f"Symlink already exists: {dest_path} -> {os.readlink(dest_path)}")
+        return
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    os.symlink(src_path, dest_path)
+    if os.path.islink(dest_path):
+        print(f"Created symlink: {dest_path} -> {os.readlink(dest_path)}")
+    else:
+        print("Symlink creation failed.")
 
-def process_subvolume(src_path, out_path, q_idx):
-    with h5py.File(src_path, "r") as src, h5py.File(out_path, "w") as dst:
-        _, y, x = src["raw"].shape
+def process_subvolume(input_path, output_path, q_idx):
+    with h5py.File(input_path, "r") as f_in, h5py.File(output_path, "w") as f_out:
+        _, y, x = f_in["raw"].shape
         sy, sx = get_quadrant_slices(y, x)[q_idx]
         for key in KEYS:
-            if key not in src:
+            if key not in f_in:
                 continue
-            data = src[key][:]
+            data = f_in[key][:]
             chunk = data[:, sy, sx] if data.ndim == 3 else data
-            dst.create_dataset(key, data=chunk, compression="gzip")
-    print(f"Processed {out_path.name}. Shape: {chunk.shape}")
+            f_out.create_dataset(key, data=chunk, compression="gzip")
+    print(f"Processed {output_path.name}. Shape: {chunk.shape}")
 
 
 def main():
     DATA_ROOT = Path("/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data")
-    SRC_DIR = DATA_ROOT / "predictions/deepict"
-    OUT_DIR = DATA_ROOT / "experimental/deepict/subvolumes"
+    INPUT_DIR = DATA_ROOT / "experimental/deepict/h5"
+    OUTPUT_DIR = DATA_ROOT / "experimental/deepict/h5/subvolumes"
 
-    src_paths = sorted(SRC_DIR.glob("*.h5"))
-    quadrants = [(p, q) for p in src_paths for q in range(4)]
+    n_train = round(N_QUADRANTS * TRAIN_FRACTION)
+    n_val = round(N_QUADRANTS * VAL_FRACTION)
 
-    n = len(quadrants)
-    train_end = int(TRAIN_FRACTION * n)
-    val_end = int((TRAIN_FRACTION + VAL_FRACTION) * n)
-    train_idx = list(range(0, train_end))
-    val_idx = list(range(train_end, val_end))
-    test_idx = list(range(val_end, n))
+    input_paths = sorted(INPUT_DIR.glob("*.h5"))
 
-    splits = [("train", train_idx), ("val", val_idx), ("test", test_idx)]
+    rng = random.Random(SEED)
+    splits = {"train": [], "val": [], "test": []}
 
-    for split, indices in splits:
-        split_dir = OUT_DIR / split
+    for input_path in input_paths:
+        quadrant_indices = list(range(N_QUADRANTS))
+        rng.shuffle(quadrant_indices)
+        splits["train"] += [(input_path, q) for q in quadrant_indices[:n_train]]
+        splits["val"]   += [(input_path, q) for q in quadrant_indices[n_train:n_train + n_val]]
+        splits["test"]  += [(input_path, q) for q in quadrant_indices[n_train + n_val:]]
+
+    for split, entries in splits.items():
+        print(f"\n{split} ({len(entries)} subvolumes)")
+        split_dir = OUTPUT_DIR / split
         split_dir.mkdir(parents=True, exist_ok=True)
-        print(f"\n{split} ({len(indices)} subvolumes)")
 
-        for i in indices:
-            src_path, q_idx = quadrants[i]
-            out_path = split_dir / f"{src_path.stem}_{q_idx}.h5"
-            if out_path.exists():
-                print(f"  Skipping {out_path.name}, already exists.")
+        for input_path, q_idx in entries:
+            output_path = split_dir / f"{input_path.stem}_{q_idx}.h5"
+            if output_path.exists():
+                print(f"  Skipping {output_path.name}, already exists.")
                 continue
-            process_subvolume(src_path, out_path, q_idx)
+            process_subvolume(input_path, output_path, q_idx)
+
+    create_symlink(OUTPUT_DIR / "test", DATA_ROOT / "predictions/deepict/subvolumes")
+
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,22 @@
+# actin domain adaptation pipeline
+
+[run_info]
+data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
+synthetic_dataset = "opto_dataset_0"                                         # simulated dataset
+real_dataset = "opto"                                                        # target experimental dataset
+run = 5
+
+[domain_adaptation]
+data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/optogenetics/h5"
+source_checkpoint = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/out/opto/run1/checkpoints/actin-opto-run1"
+train_glob = "train/*.h5"
+val_glob = "val/*.h5"
+raw_key = "raw"
+patch_shape = [128, 384, 384]
+batch_size = 1
+lr = 1e-4
+n_iterations = 10_000
+supervised_train_glob = "train/*.h5"
+supervised_val_glob = "val/*.h5"
+label_key = "/labels/actin"
+labeled_fraction = 1.0

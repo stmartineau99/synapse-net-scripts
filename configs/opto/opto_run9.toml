@@ -1,0 +1,18 @@
+# actin supervised fine-tuning on real subvolumes
+
+[run_info]
+data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
+synthetic_dataset = "opto_dataset_0"                                         # not used (data_dir overrides)
+real_dataset = "opto"
+run = 9
+
+[supervised_training]
+data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/optogenetics/h5/subvolumes"
+train_glob = "train/*.h5"
+val_glob = "val/*.h5"
+source_checkpoint = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/out/opto/run1/checkpoints/actin-opto-run1"
+label_key = "/labels/actin"
+patch_shape = [128, 384, 384]
+batch_size = 2
+lr = 1e-4
+n_iterations = 1_000

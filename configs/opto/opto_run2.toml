@@ -1,0 +1,17 @@
+# actin supervised training on real data from scratch
+
+[run_info]
+data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
+synthetic_dataset = "opto_dataset_0"                                         # overrride with `data_dir`
+real_dataset = "opto"
+run = 2
+
+[supervised_training]
+data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/optogenetics/h5"
+train_glob = "train/*.h5"
+val_glob = "val/*.h5"
+label_key = "/labels/actin"
+patch_shape = [128, 384, 384]
+batch_size = 2
+lr = 2e-4
+n_iterations = 10_000

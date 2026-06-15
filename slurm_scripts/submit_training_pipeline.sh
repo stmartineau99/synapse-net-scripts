@@ -1,10 +1,12 @@
 #!/bin/bash
 
 # toggle on/off
-RUN_PREPARE=false
-RUN_SUPERVISED=false
-RUN_USDA=false
-RUN_SSDA=true
+RUN_PREPARE=true
+RUN_SUPERVISED=true
+RUN_DA=false
+
+DATASET=opto
+RUN=run10
 
 PARENT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts
 SCRIPT_DIR=$PARENT_DIR/slurm_scripts
@@ -13,7 +15,7 @@ LOG_DIR=$PARENT_DIR/slurm_logs
 JSON_DIR=$PARENT_DIR/slurm_metrics
 mkdir -p $LOG_DIR $JSON_DIR
 
-CONFIG=$PARENT_DIR/configs/deepict/deepict_run25.toml
+CONFIG=$PARENT_DIR/configs/"$DATASET"/"$DATASET"_"$RUN".toml
 CONFIG_NAME=$(basename $CONFIG .toml)
 
 submit_job() {
@@ -21,7 +23,6 @@ submit_job() {
     local script=$2
     local config=$3
     local dependency=$4
-d
     local dependency_flag=""
     [[ -n "$dependency" ]] && dependency_flag="--dependency=afterok:$dependency"
 
@@ -59,12 +60,7 @@ if [[ "$RUN_SUPERVISED" == true ]]; then
         $SCRIPT_DIR/sbatch_supervised_training.sh $CONFIG $JOB1_ID) || exit 1
 fi
 
-if [[ "$RUN_USDA" == true ]]; then
-    JOB3_ID=$(submit_job "USDA_${CONFIG_NAME}" \
-        $SCRIPT_DIR/sbatch_USDA.sh $CONFIG $JOB2_ID) || exit 1
-fi
-
-if [[ "$RUN_SSDA" == true ]]; then
-    JOB4_ID=$(submit_job "SSDA_${CONFIG_NAME}" \
-        $SCRIPT_DIR/sbatch_SSDA.sh $CONFIG $JOB2_ID) || exit 1
+if [[ "$RUN_DA" == true ]]; then
+    JOB3_ID=$(submit_job "DA_${CONFIG_NAME}" \
+        $SCRIPT_DIR/sbatch_domain_adaptation.sh $CONFIG $JOB2_ID) || exit 1
 fi

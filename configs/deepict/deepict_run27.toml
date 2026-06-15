@@ -1,0 +1,22 @@
+# actin domain adaptation pipeline
+
+[run_info]
+data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
+synthetic_dataset = "deepict_dataset_5"                                     # simulated dataset
+real_dataset = "deepict"                                                    # target experimental dataset
+run = 27
+
+[domain_adaptation]
+data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/h5/subvolumes"
+source_checkpoint = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/out/deepict/run26/checkpoints/actin-deepict-run26"
+train_glob = "train/*.h5"
+val_glob = "val/*.h5"
+raw_key = "raw"
+sample_mask_key = "sample_mask"
+patch_shape = [128, 384, 384]
+batch_size = 1
+lr = 1e-4
+n_iterations = 10_000
+supervised_train_glob = "train/*.h5"
+supervised_val_glob = "val/*.h5"
+label_key = "/labels/actin"

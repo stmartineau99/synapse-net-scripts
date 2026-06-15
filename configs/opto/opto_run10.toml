@@ -1,0 +1,26 @@
+# actin supervised training pipeline
+
+[run_info]
+data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
+synthetic_dataset = "opto_dataset_1"                                         # simulated dataset
+real_dataset = "opto"                                                        # target experimental dataset
+run = 10
+
+[prepare_training]
+n_conditions = 3
+n_tomos = 15
+conditions = [0, 1, 2]
+train_fraction = 0.8
+val_fraction = 0.2
+test_fraction = 0.0
+raw_key = "raw"
+label_key = "/labels/actin"
+
+[supervised_training]
+conditions = [0, 1, 2]
+label_key = "/labels/actin"
+patch_shape = [64, 256, 256]
+batch_size = 4
+lr = 1e-4
+n_iterations = 10_000
+save_every_kth_epoch = 2

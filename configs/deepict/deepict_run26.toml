@@ -1,0 +1,18 @@
+# actin supervised fine-tuning on real data
+
+[run_info]
+data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
+synthetic_dataset = "deepict_dataset_5"                                     # not used (data_dir overrides)
+real_dataset = "deepict"
+run = 26
+
+[supervised_training]
+data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/h5/subvolumes"
+train_glob = "train/*.h5"
+val_glob = "val/*.h5"
+source_checkpoint = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/training/out/deepict/run6/checkpoints/actin-deepict-run6"
+label_key = "/labels/actin"
+patch_shape = [128, 384, 384]
+batch_size = 2
+lr = 1e-4
+n_iterations = 1_000

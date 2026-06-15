@@ -1,8 +1,14 @@
+import h5py
 import configargparse
 import torch_em.loss
 from pathlib import Path
 from synapse_net.training import supervised_training
 from torch_em.data.sampler import MinForegroundSampler
+
+
+def has_label_key(path, label_key):
+    with h5py.File(path, "r") as f:
+        return label_key in f
 
 
 def parse_args():
@@ -22,17 +28,19 @@ def parse_args():
     parser.add_argument("--run", type=int, required=True)
 
     # supervised_training
+    parser.add_argument("--data_dir", type=str, default=None)
+    parser.add_argument("--train_glob", type=str, default="train/*.h5")
+    parser.add_argument("--val_glob", type=str, default="val/*.h5")
     parser.add_argument("--label_key", type=str, default="/labels/actin")
-    parser.add_argument(
-        "--patch_shape", type=int, nargs=3, default=[64, 256, 256]
-    )
+    parser.add_argument("--patch_shape", type=int, nargs=3, default=[64, 256, 256])
     parser.add_argument("--batch_size", type=int, default=4)
     parser.add_argument("--lr", type=float, default=4e-4)
     parser.add_argument("--loss_fn", type=str, default=None)
     parser.add_argument("--conditions", type=int, nargs="*", default=None)
     parser.add_argument("--n_iterations", type=int, default=50_000)
     parser.add_argument("--save_every_kth_epoch", type=int, default=None)
-    parser.add_argument("--percentile_norm", action="store_true", default=False)
+    # parser.add_argument("--percentile_norm", action="store_true", default=False)
+    parser.add_argument("--source_checkpoint", type=str, default=None)
     parser.add_argument("--check", action="store_true", default=False)
     parser.add_argument(
         "--experimental_val_paths", type=str, nargs="*", default=None,
@@ -52,7 +60,7 @@ def main():
     args = parse_args()
 
     run_name = f"actin-{args.real_dataset}-run{args.run}"
-    train_data_dir = Path(args.data_root) / "training" / args.synthetic_dataset
+    train_data_dir = Path(args.data_dir) if args.data_dir else Path(args.data_root) / "training" / args.synthetic_dataset
     out_dir = (
         Path(args.data_root) / "training" / "out"
         / args.real_dataset / f"run{args.run}"
@@ -61,10 +69,12 @@ def main():
         args.batch_size = 1
 
     train_paths = sorted(
-        str(p) for p in (train_data_dir / "train").glob("*.h5")
+        str(p) for p in train_data_dir.glob(args.train_glob)
+        if has_label_key(p, args.label_key)
     )
     val_paths = sorted(
-        str(p) for p in (train_data_dir / "val").glob("*.h5")
+        str(p) for p in train_data_dir.glob(args.val_glob)
+        if has_label_key(p, args.label_key)
     )
 
     if args.conditions:
@@ -90,9 +100,10 @@ def main():
         loss_fn=loss_fn,
         n_iterations=args.n_iterations,
         save_root=str(out_dir),
+        checkpoint_path=args.source_checkpoint,
         check=args.check,
         save_every_kth_epoch=args.save_every_kth_epoch,
-        percentile_norm=args.percentile_norm,
+        # percentile_norm=args.percentile_norm,
     )
 
 

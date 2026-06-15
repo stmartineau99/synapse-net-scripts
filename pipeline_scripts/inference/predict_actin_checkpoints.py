@@ -80,7 +80,8 @@ def main():
         print(f"No epoch checkpoints found in {checkpoint_dir}")
         return
 
-    data_paths = sorted(data_dir.glob("*.h5"))
+    tomo_ids = {"00004", "00012"}
+    data_paths = sorted(p for p in data_dir.glob("*.h5") if p.stem in tomo_ids)
     if not data_paths:
         print(f"No h5 files found in {data_dir}")
         return
@@ -124,7 +125,7 @@ def main():
 
     print("\n--- Summary ---")
     for _, r in df_mean.iterrows():
-        print(f"iter {int(r['iteration']):>6d}: precision={r['precision']:.4f}  recall={r['recall']:.4f}  dice={r['dice']:.4f}")
+        print(f"iter {int(r['iteration']):>6d}  epoch {int(r['epoch'])}: precision={r['precision']:.4f}  recall={r['recall']:.4f}  dice={r['dice']:.4f}")
     png_dir = out_dir / "png"
     png_dir.mkdir(parents=True, exist_ok=True)
     png_path = png_dir / f"{model_name}_checkpoints.png"

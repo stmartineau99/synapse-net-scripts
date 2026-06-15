@@ -2,7 +2,7 @@
 #SBATCH -p grete:shared
 #SBATCH --job-name=supervised_training
 #SBATCH -o /projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/slurm-%j_%x.out
-#SBATCH -t 6:00:00
+#SBATCH -t 24:00:00
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=18
 #SBATCH --mem=40G

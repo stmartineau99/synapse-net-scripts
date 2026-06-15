@@ -16,7 +16,7 @@ SLURM script: `sbatch slurm_scripts/sbatch_supervised_training.sh configs/deepic
 **Val:** 12 tomograms (4 per condition)  
 **Test:** 6 tomograms (2 per condition)  
 **Loss:** DiceLoss (default)  
-**lr:** 1e-4 | **batch_size:** 4 | **n_iterations:** 25,000
+**lr:** 4e-4 | **batch_size:** 4 | **n_iterations:** 25,000
 
 Baseline run on `deepict_dataset_3`. 
 ---
@@ -133,6 +133,17 @@ Same as run 16 but with lower learning rate (1e-4 vs 2e-4), far fewer iterations
 
 ---
 
+## Run 20
+
+**Dataset:** `deepict_dataset_6` (15 tomograms, 4 conditions)  
+**Conditions:** [0, 1, 2, 3]  
+**Loss:** DiceLoss (default)  
+**lr:** 1e-4 | **batch_size:** 4 | **n_iterations:** 10,000 | **save_every_kth_epoch:** 2
+
+Invalid — `deepict_dataset_6` simulations are corrupted due to FakET applying percentile normalisation during generation. Do not use for training or evaluation.
+
+---
+
 ## Run 22
 
 **Dataset:** `deepict_dataset_5` (15 tomograms, 4 conditions)  
@@ -163,10 +174,10 @@ Same as run 22 with percentile normalization (1st/99th) instead of standardizati
 
 ## Run 24
 
-**Type:** USDA (Unsupervised Domain Adaptation)  
-**Source checkpoint:** `run6` (`actin-deepict-run6`)  
-**Unlabeled target data:** `experimental/deepict/h5/`  
-**lr:** 2e-4 | **batch_size:** 2 | **n_iterations:** 10,000
+**Type:** USDA
+**Source checkpoint:** `actin-deepict-run6`
+**Data:** `experimental/deepict/subvolumes/` 
+**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000
 
 USDA baseline using run6 as the source checkpoint. Mean Teacher adaptation on unlabeled deepict tomograms. Paired with run 25 to compare SSDA vs. USDA from the same starting checkpoint.
 
@@ -174,10 +185,84 @@ USDA baseline using run6 as the source checkpoint. Mean Teacher adaptation on un
 
 ## Run 25
 
-**Type:** SSDA (Semi-Supervised Domain Adaptation)  
-**Source checkpoint:** `run6` (`actin-deepict-run6`)  
-**Unlabeled target data:** `experimental/deepict/h5/`  
-**Labeled target data:** `predictions/deepict/` (`/labels/actin`)  
-**lr:** 2e-4 | **batch_size:** 2 | **n_iterations:** 10,000
+**Type:** SSDA (Full Label)
+**Source checkpoint:** `actin-deepict-run6`
+**Data:** `experimental/deepict/subvolumes/` 
+**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000
 
-SSDA counterpart to run 24. 
+SSDA counterpart to run 24.
+
+---
+
+## Run 26
+
+**Type:** SL (Warmup)
+**Source checkpoint:** `actin-deepict-run26`
+**Data:** `experimental/deepict/subvolumes/`  
+**lr:** 1e-4 | **batch_size:** 2 | **n_iterations:** 1,000
+
+Finetuning run6 on real labeled subvolumes to improve real-domain precision before DA. Acts as a 1,000 iter warmup period for the teacher before SSDA. 
+
+---
+
+## Run 27
+
+**Type:** SSDA
+**Source checkpoint:** `actin-deepict-run26`
+**Data:** `experimental/deepict/subvolumes/`
+**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000
+
+Same as run 25 with run26 as source checkpoint. 
+
+---
+
+## Run 28
+
+**Type:** SL (Full Label)
+**Source checkpoint:** none  
+**Data:** `experimental/deepict/subvolumes/`  
+**lr:** 4e-4 | **batch_size:** 2 | **n_iterations:** 10,000
+
+Supervised training on real data from scratch. Strong baseline for comparison with run24, run25, and run27.
+
+---
+
+## Run 29
+
+**Type:** SSDA (Low Label)
+**Source checkpoint:** `actin-deepict-run6`
+**Data:** `experimental/deepict/subvolumes/`
+**Train:** 1 subvolume | **Val:** 1 subvolume
+**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000 | **labeled_fraction:** 0.25
+
+Same as run 25 but with only 25% of labeled subvolumes used for the supervised component. Tests SSDA under low-label conditions.
+
+---
+
+## Run 30
+
+**Type:** SL (Synthetic)
+**Dataset:** `deepict_dataset_3` (20 tomograms, 3 conditions)  
+**Conditions:** [0, 1, 2]  
+**Train:** 42 tomograms (14 per condition)  
+**Val:** 12 tomograms (4 per condition)  
+**Test:** 6 tomograms (2 per condition)  
+**Loss:** DiceLoss (default)  
+**patch_shape:** [64, 256, 256]  
+**lr:** 1e-4 | **batch_size:** 4 | **n_iterations:** 10,000 | **save_every_kth_epoch:** 2
+
+Repeat of run 6 with reduced iterations and per-epoch checkpoints for checkpoint analysis.
+
+---
+
+## Run 31
+
+**Type:** SL (Synthetic)
+**Dataset:** `deepict_dataset_7` (60 tomograms, 4 conditions)  
+**Conditions:** [0, 1, 2, 3]  
+**Train:** 48 tomograms (12 per condition)  
+**Val:** 12 tomograms (3 per condition)  
+**Loss:** DiceLoss (default)  
+**lr:** 1e-4 | **batch_size:** 4 | **n_iterations:** 25,000
+
+Baseline run on `deepict_dataset_7`.

@@ -1,6 +1,4 @@
 # actin supervised training pipeline
-# documentation-only config reconstructed from old/experiments/deepict/run6/
-
 [run_info]
 data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
 synthetic_dataset = "deepict_dataset_3"                                     # simulated dataset

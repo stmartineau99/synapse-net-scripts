@@ -1,4 +1,4 @@
-# actin unsupervised domain adapation pipeline
+# actin domain adaptation pipeline
 
 [run_info]
 data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
@@ -25,12 +25,27 @@ lr = 4e-4
 n_iterations = 50_000
 # loss_fn = "DiceLoss"                  # optional; defaults to DiceLoss
 
-[domain_adaptation]
+[unsupervised_domain_adaptation]
 # source_checkpoint = "/override/checkpoint/path"
-train_glob = "*.h5" #TODO fix this 
-val_glob = "*.h5"   #TODO fix this 
+train_glob = "*.h5" #TODO fix this
+val_glob = "*.h5"   #TODO fix this
 raw_key = "raw"
 sample_mask_key = "sample_mask"
 patch_shape = [64, 256, 256]
 batch_size = 2
 lr = 2e-4
+
+[semisupervised_domain_adaptation]
+# source_checkpoint = "/override/checkpoint/path"
+train_glob = "*.h5" #TODO fix this
+val_glob = "*.h5"   #TODO fix this
+raw_key = "raw"
+sample_mask_key = "sample_mask"
+patch_shape = [64, 256, 256]
+batch_size = 2
+lr = 2e-4
+supervised_data_dir = ""               # path to directory with labeled h5 files
+supervised_train_glob = "*.h5"
+supervised_val_glob = "*.h5"
+label_key = "/labels/actin"
+raw_key_supervised = "raw"

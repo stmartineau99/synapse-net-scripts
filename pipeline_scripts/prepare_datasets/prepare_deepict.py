@@ -47,7 +47,6 @@ def process_sample(raw_path, h5_path, mask_path, json_path, out_path, target_vsi
     mask = torch_em.transform.generic.Rescale(scale, is_label=True)(mask).astype(np.uint8)
     if has_labels:
         labels = torch_em.transform.generic.Rescale(scale, is_label=True)(labels).astype(np.uint8)
-        labels = labels * mask
 
     rescaled_raw_dir = raw_path.parent / "rescaled_10A"
     rescaled_raw_dir.mkdir(exist_ok=True)
