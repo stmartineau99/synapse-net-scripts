@@ -98,10 +98,10 @@ def save_metrics_png(df, model_name, out_path):
 
 def main():
     args = parse_args()
-    DATA_ROOT = Path(args.data_root)
+    data_root = Path(args.data_root)
 
     checkpoint = args.checkpoint or str(
-        DATA_ROOT / "training" / "out" / args.real_dataset / f"run{args.run}"
+        data_root / "training" / "out" / args.real_dataset / f"run{args.run}"
         / "checkpoints" / f"actin-{args.real_dataset}-run{args.run}"
     )
     model_name = Path(checkpoint).stem
@@ -112,7 +112,7 @@ def main():
     elif args.data_paths:
         data_paths = [Path(p) for p in args.data_paths]
     else:
-        data_paths = sorted((DATA_ROOT / "predictions" / args.real_dataset).glob("*.h5"))
+        data_paths = sorted((data_root / "predictions" / args.real_dataset).glob("*.h5"))
 
     if not data_paths:
         raise FileNotFoundError(f"No h5 files found.")
@@ -165,7 +165,7 @@ def main():
         print(f"mean recall:    {np.mean([r['recall'] for r in rows]):.4f}")
         print(f"mean dice:      {np.mean([r['dice'] for r in rows]):.4f}")
 
-        csv_dir = DATA_ROOT / f"predictions/{args.real_dataset}/csv"
+        csv_dir = data_root / f"predictions/{args.real_dataset}/csv"
         csv_dir.mkdir(parents=True, exist_ok=True)
         csv_path = csv_dir / f"{model_name}.csv"
         with open(csv_path, mode="w", newline="") as f:
@@ -177,7 +177,7 @@ def main():
         print(f"Saved CSV: {csv_path}")
 
         df = pd.read_csv(csv_path, dtype={"tomogram": str})
-        png_dir = DATA_ROOT / f"predictions/{args.real_dataset}/png"
+        png_dir = data_root / f"predictions/{args.real_dataset}/png"
         png_dir.mkdir(parents=True, exist_ok=True)
         png_path = png_dir / f"{model_name}.png"
         save_metrics_png(df, model_name, png_path)

@@ -3,15 +3,15 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from pathlib import Path
 
-DATASET = "opto"
-OUT_FILE  = "opto_runs.png"
+DATASET = "deepict"
+OUT_FILE  = "deepict_runs1.png"
 
 RUNS = {
-    "Weak Baseline": "actin-opto-run1.csv",
-    "USDA": "actin-opto-run3.csv",
-    "SSDA low label": "actin-opto-run4.csv",
-    "SSDA full label": "actin-opto-run5.csv",
-    "Strong Baseline": "actin-opto-run2.csv"
+    "Synthetic Baseline": "actin-deepict-run6.csv",
+    "USDA": "actin-deepict-run24.csv",
+    "SSDA Low Label": "actin-deepict-run29.csv",
+    "SL Low Label": "actin-deepict-run32.csv",
+    "SL Full Label": "actin-deepict-run28.csv"
 }
 
 METRICS = ["precision", "recall", "dice"]
@@ -52,10 +52,10 @@ def main():
 
     ax.set_xticks(x + width * (len(RUNS) - 1) / 2)
     ax.set_xticklabels([m.capitalize() for m in METRICS])
-    ax.set_ylim(0, 0.8)
+    ax.set_ylim(0, 1.0)
     ax.set_yticks(np.arange(0, 1.0, 0.2))
     ax.set_ylabel("Score")
-    ax.legend(loc="upper right", fontsize=8)
+    ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left", fontsize=8)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.set_facecolor("white")

@@ -35,15 +35,22 @@ def main():
             all_gt.append(gt)
             all_pred.append(pred)
         
-    precision, recall, _ = precision_recall_curve(
+    precision, recall, thresholds = precision_recall_curve(
         np.concatenate(all_gt), np.concatenate(all_pred)
     )
     pr_auc = auc(recall, precision)
+    f1 = 2 * precision * recall / (precision + recall + 1e-12)
+    best = int(np.argmax(f1[:-1]))
+    best_threshold = float(thresholds[best])
     print(f"AUC-PR: {pr_auc:.4f}")
+    print(f"Best F1: {f1[best]:.4f} at threshold {best_threshold:.4f} "
+          f"(precision {precision[best]:.4f}, recall {recall[best]:.4f})")
 
     fig, ax = plt.subplots(figsize=(6, 5))
     ax.plot(recall, precision, color="#4878d0", linewidth=2,
             label=f"{args.model_name}  AUC={pr_auc:.3f}")
+    ax.scatter(recall[best], precision[best], color="#d65f5f", zorder=5,
+               label=f"max-F1  t={best_threshold:.3f}  F1={f1[best]:.3f}")
     ax.set_xlabel("Recall")
     ax.set_ylabel("Precision")
     ax.set_xlim(0, 1)

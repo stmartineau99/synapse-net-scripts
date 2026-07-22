@@ -1,9 +1,12 @@
+import random
 import h5py
 import configargparse
 import torch_em.loss
 from pathlib import Path
 from synapse_net.training import supervised_training
 from torch_em.data.sampler import MinForegroundSampler
+
+LABELED_FRACTION_SEED = 42
 
 
 def has_label_key(path, label_key):
@@ -38,6 +41,7 @@ def parse_args():
     parser.add_argument("--loss_fn", type=str, default=None)
     parser.add_argument("--conditions", type=int, nargs="*", default=None)
     parser.add_argument("--n_iterations", type=int, default=50_000)
+    parser.add_argument("--labeled_fraction", type=float, default=1.0)
     parser.add_argument("--save_every_kth_epoch", type=int, default=None)
     # parser.add_argument("--percentile_norm", action="store_true", default=False)
     parser.add_argument("--source_checkpoint", type=str, default=None)
@@ -80,6 +84,13 @@ def main():
     if args.conditions:
         train_paths = filter_by_conditions(train_paths, args.conditions)
         val_paths = filter_by_conditions(val_paths, args.conditions)
+
+    if args.labeled_fraction < 1.0:
+        rng = random.Random(LABELED_FRACTION_SEED)
+        n_train = max(1, int(len(train_paths) * args.labeled_fraction))
+        n_val = max(1, int(len(val_paths) * args.labeled_fraction))
+        train_paths = sorted(rng.sample(train_paths, n_train))
+        val_paths = sorted(rng.sample(val_paths, n_val))
 
     if args.experimental_val_paths:
         train_paths = train_paths + val_paths

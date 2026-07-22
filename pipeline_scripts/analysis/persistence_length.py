@@ -86,23 +86,21 @@ def tangent_autocorr(filaments, max_lag=None):
     return corr
 
 def fit_persistence_length(corr, sampling_dist):
-    """Fit persistence length Lp from tangent autocorrelation.
-
-    Model: <t(0)·t(s)> = exp(-s / Lp), fit through the origin on log scale.
-    Returns Lp in the coordinate unit (A). NaN if the fit is degenerate.
-    """
+    """Fit log<cos θ> = ln(A) - s / Lp with a free intercept. Return (Lp in A, R²); Lp NaN if degenerate."""
     lags = np.arange(len(corr))
     s = lags * sampling_dist
     valid = np.isfinite(corr) & (corr > 0.0)
     s = s[valid]
     y = np.log(corr[valid])
     if s.size < 2:
-        return np.nan
+        return np.nan, np.nan
 
-    slope = np.sum(s * y) / np.sum(s * s)
-    if slope >= 0.0:
-        return np.nan
-    return -1.0 / slope
+    slope, intercept = np.polyfit(s, y, 1)
+    residual = y - (slope * s + intercept)
+    ss_tot = np.sum((y - np.mean(y)) ** 2)
+    r2 = 1.0 - np.sum(residual ** 2) / ss_tot if ss_tot > 0 else np.nan
+    lp = -1.0 / slope if slope < 0.0 else np.nan
+    return lp, r2
 
 
 def plot_summary(rows, out_path):
@@ -168,7 +166,7 @@ def main():
         max_lag = int(p90 / args.sampling_dist)
 
         corr = tangent_autocorr(filaments, max_lag)
-        lp = fit_persistence_length(corr, args.sampling_dist)
+        lp, r2 = fit_persistence_length(corr, args.sampling_dist)
 
         rows.append({
             "sample": data_path.stem,
@@ -176,8 +174,10 @@ def main():
             "mean_length": float(np.mean(lengths)),
             "p90_length": p90,
             "persistence_length": lp,
+            "r_squared": r2,
         })
-        print(f"{data_path.name}: {len(filaments)} filaments, Lp = {lp:.1f} A")
+        lp_um = lp / 10000.0 if np.isfinite(lp) else np.nan
+        print(f"{data_path.name}: {len(filaments)} filaments, Lp = {lp_um:.2f} um, R^2 = {r2:.3f}")
 
     suffix = f"_{args.tag}" if args.tag else ""
     if lengths_by_sample:
