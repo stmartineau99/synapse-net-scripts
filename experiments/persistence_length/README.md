@@ -54,15 +54,15 @@ Both fit plots share axes (log <cos θ> vs distance in nm), so they are directly
 
 Method (Bäuerlein):
 
-<img src="results/persistence_length_bauerlein_deepict.png" width="50%">
+<img src="results/persistence_length_bauerlein_deepict.png" width="80%">
 
 Method 2 (robust):
 
-<img src="results/persistence_length_deepict.png" width="50%">
+<img src="results/persistence_length_deepict.png" width="80%">
 
 Filament length distribution:
 
-<img src="results/length_distribution_deepict.png" width="50%">
+<img src="results/length_distribution_deepict.png" width="80%">
 
 ### Interpretation
 
@@ -119,9 +119,9 @@ filaments before trusting any value.
 
 Pooled actin, `--min_length 350`. Persistence length in µm.
 
-| source     | n    | Bäuerlein Lp | R²    | robust Lp | R²    |
-|------------|------|--------------|-------|-----------|-------|
-| GT         | 9643 | 3.60         | 0.965 | 3.73      | 1.000 |
+| source     | n    | Method 1 Lp  | R²    | Method 2 Lp | R²    |
+|------------|------|--------------|-------|-------------|-------|
+| GT         | 9643 | 3.60         | 0.965 | 3.73        | 1.000 |
 
 Both methods recover the 3.7 µm ground truth on clean data. robust is nearly exact
 (3.73 µm, R² 1.000); Bäuerlein is close (3.60 µm). The through-origin fit works here because
@@ -129,8 +129,8 @@ the ground-truth filaments are long and clean, unlike the fragmented Deepict ske
 
 Method 1 (Bäuerlein):
 
-<img src="results/persistence_length_bauerlein_polnet.png" width="50%">
+<img src="results/persistence_length_bauerlein_polnet.png" width="80%">
 
 Method 2 (robust):
 
-<img src="results/persistence_length_polnet.png" width="50%">
+<img src="results/persistence_length_polnet.png" width="80%">
