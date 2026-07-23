@@ -52,7 +52,7 @@ Cutoff 350 A (35 nm):
 
 Both fit plots share axes (log <cos θ> vs distance in nm), so they are directly comparable.
 
-Method (Bäuerlein):
+Method 1 (Bäuerlein):
 
 <img src="results/persistence_length_bauerlein_deepict.png" width="80%">
 
@@ -66,8 +66,9 @@ Filament length distribution:
 
 ### Interpretation
 
-robust fits well at both cutoffs (R² 0.95 to 0.99). Bäuerlein fits poorly (negative R²). 
-Forcing the intercept to 0 does not match the measured decay, so the Bäuerlein Lp is not trustworthy on this data.
+robust fits well at both cutoffs (R² 0.95 to 0.99). Bäuerlein fits poorly (negative R²);
+forcing the intercept to 0 does not match the measured decay, so the Bäuerlein Lp is not
+trustworthy here.
 
 ### Merged filaments
 
