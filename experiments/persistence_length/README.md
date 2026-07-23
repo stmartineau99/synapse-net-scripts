@@ -106,6 +106,40 @@ filaments before trusting any value.
 
 <img src="results/persistence_length_deepict_clean.png" width="80%">
 
+### Instance Segmentation Pipeline Changes
+
+Changes to `clean_filament_graph`, then re-ran `predict_actin_instances.py` on 00004 and
+00012:
+
+- Always split a degree-4 crossing at the most collinear pairing; a crossing left intact
+  fuses two filaments.
+- Lower the degree-3 branch cutoff from 30 to 20 deg (`--min_branch_angle 20`)
+
+Every degree3/4 junction is now split (00004: 11 -> 0, 00012: 9 -> 0). 
+
+Fragmentation check. Increased splitting adds a few filaments >= 350 A and almost no short ones,  so no
+meaningful sub 350 A fragmentation is introduced.
+
+| sample | >=350 A before | >=350 A after | <350 A before | <350 A after |
+|--------|----------------|---------------|---------------|--------------|
+| 00004  | 1301           | 1307          | 1945          | 1950         |
+| 00012  | 1834           | 1842          | 2528          | 2529         |
+
+
+| sample   | Lp before | R² before | Lp after | R² after |
+|----------|-----------|-----------|----------|----------|
+| 00004    | 3.41      | 0.953     | 14.02    | 0.770    |
+| 00012    | 1.00      | 0.987     | 2.94     | 0.858    |
+
+
+<img src="results/persistence_length_deepict_after.png" width="80%">
+
+Instance masks (before, after)
+
+<img src="results/instance_comparison_00004.png" width="100%">
+
+<img src="results/instance_comparison_00012.png" width="100%">
+
 ## Polnet Simulations - Ground Truth
 
 ### Inputs
