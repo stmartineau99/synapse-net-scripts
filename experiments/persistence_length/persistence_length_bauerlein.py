@@ -77,8 +77,9 @@ def fit_through_origin(s, y):
 
 def plot_fits(curves, out_path):
     fig, ax = plt.subplots(figsize=(7, 4))
-    for sample, s, y, slope in curves:
-        line = ax.plot(s / 10.0, y, ".", ms=3, label=sample)[0]
+    for sample, lp, s, y, slope in curves:
+        label = sample if not np.isfinite(lp) else f"{sample}  Lp={lp / 10000.0:.2f} µm"
+        line = ax.plot(s / 10.0, y, ".", ms=3, label=label)[0]
         ax.plot(s / 10.0, slope * s, "-", color=line.get_color())
     ax.set_xlabel("distance [nm]")
     ax.set_ylabel("log <cos θ>")
@@ -125,6 +126,7 @@ def main():
         y = np.log(cos_av[valid])
         slope, r2 = fit_through_origin(s[valid], y)
         lp = -1.0 / slope if slope < 0.0 else np.nan
+        curves.append((data_path.stem, lp, s[valid], y, slope))
 
         rows.append({
             "sample": data_path.stem,
@@ -134,7 +136,6 @@ def main():
             "persistence_length": lp,
             "r_squared": r2,
         })
-        curves.append((data_path.stem, s[valid], y, slope))
         lp_um = lp / 10000.0 if np.isfinite(lp) else np.nan
         print(f"{data_path.name}: {len(lengths)} filaments, Lp = {lp_um:.2f} um, R^2 = {r2:.3f}")
 

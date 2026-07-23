@@ -1,9 +1,11 @@
-# Persistence length: Deepict
+# Persistence Length Experiments
 
-Compare two persistence-length (Lp) estimators on deepict tomograms 00004 and 00012. R²
-reports the fit quality of each method.
+Estimate the actin persistence length (Lp) two ways and check them against ground truth.
+Two experiments: Deepict tomograms (real data) and PolNet simulations (known Lp).
 
-## Input
+## Deepict
+
+### Inputs
 
 Both methods read the instance point clouds written by `predict_actin_instances.py`, one
 CSV per tomogram (`<tomogram>_instances.csv`) with columns `ID,X,Y,Z`:
@@ -15,17 +17,16 @@ CSV per tomogram (`<tomogram>_instances.csv`) with columns `ID,X,Y,Z`:
 `predict_actin_instances.py` builds the clouds from the binary segmentation by teasar
 skeletonization, `clean_filament_graph` (split, prune, join), and `connected_components`.
 
-## Methods
+### Methods
 
-Method 1 — port of Bäuerlein et al. (Cell 2017)
-(`persistence_length_bauerlein.py`):
+Method 1 — port of Bäuerlein et al. (Cell 2017) (`persistence_length_bauerlein.py`):
 
 - Reference tangent is each filament's middle tangent; correlate it with the tangent at each
   offset along both arms.
 - Uses the unsigned acute angle, so `cos θ` stays in [0, 1].
 - Fits `log<cos θ>` through the origin (intercept fixed at 0), up to the P90 filament length.
 
-Method 2 — robust version (`pipeline_scripts/analysis/persistence_length.py`):
+Method 2 — robust (`pipeline_scripts/analysis/persistence_length.py`):
 
 - All-pairs autocorrelation: average the signed tangent dot product over every point pair at
   each separation.
@@ -37,54 +38,38 @@ Method 2 — robust version (`pipeline_scripts/analysis/persistence_length.py`):
 Both resample to `--sampling_dist` (5 A) and drop filaments shorter than `--min_length`
 (350 A = 35 nm).
 
-## Results
+### Results
 
 `n` is the number of filaments kept after the length cutoff and used in the fit.
-Persistence length in µm, with fit R². Method 1 is the through-origin fit (Bäuerlein);
-Method 2 is the free-intercept fit.
+Persistence length in µm, with fit R².
 
 Cutoff 350 A (35 nm):
 
-| sample | n    | Method 1 Lp | R²    | Method 2 Lp | R²    |
-|--------|------|-------------|-------|-------------|-------|
-| 00004  | 1301 | 1.84        | -19.8 | 3.41        | 0.953 |
-| 00012  | 1834 | 0.69        | -18.1 | 1.00        | 0.987 |
-
-Cutoff 2000 A (200 nm):
-
-| sample | n   | Method 1 Lp | R²   | Method 2 Lp | R²    |
-|--------|-----|-------------|------|-------------|-------|
-| 00004  | 500 | 2.87        | -6.8 | 2.71        | 0.971 |
-| 00012  | 309 | 1.39        | -3.7 | 0.94        | 0.995 |
-
+| sample | n    | Method 1 Lp  | R²    | Method 2 Lp  | R²    |
+|--------|------|--------------|-------|--------------|-------|
+| 00004  | 1301 | 1.84         | -19.8 | 3.41         | 0.953 |
+| 00012  | 1834 | 0.69         | -18.1 | 1.00         | 0.987 |
 
 Both fit plots share axes (log <cos θ> vs distance in nm), so they are directly comparable.
 
-Method 1 (Bäuerlein):
+Method (Bäuerlein):
 
-![Method 1 fit](results/persistence_length_bauerlein_deepict.png)
+<img src="results/persistence_length_bauerlein_deepict.png" width="50%">
 
 Method 2 (robust):
 
-![Method 2 fit](results/persistence_length_deepict.png)
+<img src="results/persistence_length_deepict.png" width="50%">
 
 Filament length distribution:
 
-![Filament length distribution](results/length_distribution_deepict.png)
+<img src="results/length_distribution_deepict.png" width="50%">
 
-## Interpretation
+### Interpretation
 
-Method 2 (robust) fits well at both cutoffs (R² 0.95 to 0.99). Method 1
-(Bäuerlein) fits poorly (negative R²); it improves at the 2000 A cutoff but stays below
-zero. Forcing the intercept to 0 does not match the measured decay, so the Method 1 Lp is
-not trustworthy on this data.
+robust fits well at both cutoffs (R² 0.95 to 0.99). Bäuerlein fits poorly (negative R²). 
+Forcing the intercept to 0 does not match the measured decay, so the Bäuerlein Lp is not trustworthy on this data.
 
-For Method 2, 00004 gives Lp 3.41 µm at 350 A and 2.71 µm at 2000 A, near the reported
-stress-fiber value of 3.7 µm. 00012 gives about 0.9 to 1.0 µm. Lp exceeds the longest
-filament (about 1.8 µm), so the fit extrapolates beyond the measured range. Method 2 fits
-better than Method 1, but check the merged filaments below before trusting the value.
-
-## Merged filaments
+### Merged filaments
 
 `detect_merged_filaments.py` flags instances that `clean_filament_graph` did not split. An
 instance whose skeleton graph has a node of degree >= 3 is a branch (3) or crossing (4) that
@@ -105,7 +90,7 @@ The two failure modes separate by geometry:
   because the ordered walk jumps to the second, separated filament.
 - Degree-3 branches show a moderate turn (76-97°) with a small gap.
 
-Effect on the Method 2 fit (350 A), suspects removed:
+Effect on the robust fit (350 A), suspects removed:
 
 | sample | Lp all | R² all | Lp clean | R² clean |
 |--------|--------|--------|----------|----------|
@@ -118,7 +103,34 @@ changes Lp several-fold and lowers R². The fit is ill-conditioned: the true Lp 
 than the observable filament length, so Lp is not robustly determined. Screen for merged
 filaments before trusting any value.
 
-Method 2 fit with suspects removed. The decay is shallow, especially 00004, which barely
-drops over 500 nm, so the slope and Lp are weakly constrained.
+<img src="results/persistence_length_deepict_clean.png" width="50%">
 
-![Method 2 fit, suspects removed](results/persistence_length_deepict_clean.png)
+## Polnet Simulations - Ground Truth
+
+### Inputs
+
+- Source: Polnet simulation `deepict_dataset_7`, condition 0 (`simulation_dir_0`), 15 tomos.
+- Ground truth: actin coordinates in `motif_lists/tomo_motif_list_*.csv`.
+- Simulated persistence length: 3.7 µm.
+- Preparation: `prepare_polnet_gt.py` converts the motif lists to the `ID,X,Y,Z` format for
+  the persistence length scripts.
+
+### Results
+
+Pooled actin, `--min_length 350`. Persistence length in µm.
+
+| source     | n    | Bäuerlein Lp | R²    | robust Lp | R²    |
+|------------|------|--------------|-------|-----------|-------|
+| GT         | 9643 | 3.60         | 0.965 | 3.73      | 1.000 |
+
+Both methods recover the 3.7 µm ground truth on clean data. robust is nearly exact
+(3.73 µm, R² 1.000); Bäuerlein is close (3.60 µm). The through-origin fit works here because
+the ground-truth filaments are long and clean, unlike the fragmented Deepict skeletons.
+
+Method 1 (Bäuerlein):
+
+<img src="results/persistence_length_bauerlein_polnet.png" width="50%">
+
+Method 2 (robust):
+
+<img src="results/persistence_length_polnet.png" width="50%">
