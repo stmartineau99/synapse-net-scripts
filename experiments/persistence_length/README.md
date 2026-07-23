@@ -104,7 +104,7 @@ changes Lp several-fold and lowers R². The fit is ill-conditioned: the true Lp 
 than the observable filament length, so Lp is not robustly determined. Screen for merged
 filaments before trusting any value.
 
-<img src="results/persistence_length_deepict_clean.png" width="50%">
+<img src="results/persistence_length_deepict_clean.png" width="80%">
 
 ## Polnet Simulations - Ground Truth
 
