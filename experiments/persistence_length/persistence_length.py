@@ -1,6 +1,12 @@
-"""Measure the persistence length of filaments.
+"""Measure the persistence length of filaments from instance CSVs.
 
-Based on TARDIS format for instance point clouds:  (ID, X [A], Y [A], Z [A]).
+Each input CSV is one sample, with columns ID, X, Y, Z and coordinates in Angstrom. Rows that share an ID form one
+filament. For each sample the script resamples every filament at a sampling distance, computes the tangent
+autocorrelation, and fits log<cos θ> against contour distance to get the persistence length Lp. It writes a results CSV,
+a log-linear fit plot, and a filament-length histogram to the results directory.
+
+Usage:
+    python persistence_length.py --data_dir <path/to/data_dir> --results_dir <path/to/results_dir> [options]
 
 Based on the method of Bäuerlein et al. (Cell 2017).
 Reference implementation: https://github.com/FJBauerlein/Huntington
@@ -15,21 +21,24 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--data_dir", type=str, required=True)
-    parser.add_argument("--results_dir", type=str, required=True)
-    parser.add_argument("--pattern", type=str, default="*_instances.csv")
-    parser.add_argument("--sampling_dist", type=float, default=5.0)
-    parser.add_argument("--min_length", type=float, default=350.0)
-    parser.add_argument("--tangent_window", type=int, default=5)
-    parser.add_argument("--tag", type=str, default=None)
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--data_dir", type=str, required=True,
+                        help="Directory of per-sample instance CSVs with coordinates in Angstrom (ID, X, Y, Z).")
+    parser.add_argument("--results_dir", type=str, required=True,
+                        help="Output directory for the results CSV and plots.")
+    parser.add_argument("--pattern", type=str, default="*_instances.csv",
+                        help="Glob pattern for input CSV files in data_dir.")
+    parser.add_argument("--sampling_dist", type=float, default=5.0,
+                        help="Filament resampling distance in A.")
+    parser.add_argument("--min_length", type=float, default=350.0,
+                        help="Minimum filament length in A to include.")
+    parser.add_argument("--tangent_window", type=int, default=5,
+                        help="Number of adjacent points to average per tangent.")
     return parser.parse_args()
 
 def load_filaments(csv_path):
-    """
-    Load filament instances CSV with columns:
-    ID, X [A], Y [A], Z [A]
-    """
+    """Return a list of (N, 3) coordinate arrays, one per filament ID in the CSV."""
     df = pd.read_csv(csv_path)
 
     filaments = []
@@ -180,21 +189,20 @@ def main():
         lp_um = lp / 10000.0 if np.isfinite(lp) else np.nan
         print(f"{data_path.name}: {len(filaments)} filaments, Lp = {lp_um:.2f} um, R^2 = {r2:.3f}")
 
-    suffix = f"_{args.tag}" if args.tag else ""
     if lengths_by_sample:
-        plot_length_distribution(lengths_by_sample, results_dir / f"length_distribution{suffix}.png")
+        plot_length_distribution(lengths_by_sample, results_dir / "length_distribution.png")
 
     if len(rows) == 0:
         print("No samples with filaments above the min length.")
         return
 
-    csv_path = results_dir / f"persistence_length{suffix}.csv"
+    csv_path = results_dir / "persistence_length.csv"
     with open(csv_path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         writer.writeheader()
         writer.writerows(rows)
 
-    plot_fits(curves, results_dir / f"persistence_length{suffix}.png")
+    plot_fits(curves, results_dir / "persistence_length.png")
 
 
 if __name__ == "__main__":
