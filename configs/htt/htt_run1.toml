@@ -1,0 +1,26 @@
+# htt supervised training pipeline
+[run_info]
+data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
+synthetic_dataset = "htt_dataset_0"
+real_dataset = "htt"
+structure = "htt"
+run = 1
+
+[prepare_training]
+n_conditions = 4
+n_tomos = 15
+conditions = [0, 1, 2, 3]
+train_fraction = 0.8
+val_fraction = 0.2
+test_fraction = 0.0
+raw_key = "raw"
+label_key = "/labels/htt"
+
+[supervised_training]
+conditions = [0, 1, 2, 3]
+label_key = "/labels/htt"
+patch_shape = [64, 256, 256]
+batch_size = 4
+lr = 1e-4
+n_iterations = 25_000
+save_every_kth_epoch = 2
