@@ -1,1 +1,0 @@
-This directory contains training scripts from before I started using configuration files. 
