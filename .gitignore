@@ -1,3 +1,3 @@
-*.png
 slurm-*.out
-slurm-*.json
+slurm-*.jsonexperiments/instance_segmentation/
+__pycache__/
