@@ -22,7 +22,6 @@ SKELETON_PATH = f"{TEASAR_DIR}/00004_labels_actin_skeleton.npz"
 SEPARATED_COLOR = "#ff4d6d"
 KEPT_COLOR = "#2ecc71"
 DEG4_COLOR = "#ff9f1c"
-FRAGMENT_COLOR = "#00e5ff"
 
 
 def parse_args():
@@ -35,7 +34,9 @@ def parse_args():
     parser.add_argument("--direction_span", type=int, default=10)
     parser.add_argument("--min_branch_angle", type=float, default=20.0,
                         help="A degree-3 odd arm is separated when its branch angle is at least this (deg).")
-    parser.add_argument("--tick_length", type=float, default=50.0,
+    parser.add_argument("--min_daughter_length", type=float, default=100.0,
+                        help="Min length (A) of the branch a degree-3 split would separate.")
+    parser.add_argument("--tick_length", type=float, default=200.0,
                         help="Max dead-end branch length in A to prune as a spur.")
     parser.add_argument("--join_dist", type=float, default=50.0,
                         help="If > 0, reconnect collinear endpoints across gaps up to this (A).")
@@ -44,15 +45,8 @@ def parse_args():
     parser.add_argument("--small_fragment_length", type=float, default=200.0,
                         help="Instances shorter than this contour length (A) are highlighted as fragments.")
     parser.add_argument("--junction_size", type=float, default=5.0)
-    parser.add_argument("--circle_size", type=float, default=10.0, help="Instance tube diameter in A.")
+    parser.add_argument("--circle_size", type=float, default=70.0, help="Instance tube diameter in A.")
     return parser.parse_args()
-
-
-def _degrees(graph):
-    return np.fromiter(
-        (len(graph.node_adjacency(n)) for n in range(graph.number_of_nodes)),
-        dtype=np.int64, count=graph.number_of_nodes,
-    )
 
 
 def _branch_angle(v, graph, vertices, direction_span):
@@ -81,7 +75,8 @@ def main():
     clean_vertices, clean_edges, _ = clean_filament_graph(
         vertices, edges, radii=radii,
         direction_span=args.direction_span,
-        min_branch_angle=args.min_branch_angle, tick_length=args.tick_length,
+        min_branch_angle=args.min_branch_angle,
+        min_daughter_length=args.min_daughter_length, tick_length=args.tick_length,
         join_dist=args.join_dist, min_join_angle=args.min_join_angle,
         save_intermediates=stages,
     )
@@ -92,13 +87,14 @@ def main():
     tick_vertices, tick_edges = steps["ticks"]
     tick_graph = skeleton_to_graph(tick_vertices, tick_edges)
     tick_coords = tick_vertices / args.pixel_size
-    tick_degrees = _degrees(tick_graph)
+    tick_degrees = np.bincount(tick_edges.reshape(-1), minlength=len(tick_vertices))
     deg3 = np.where(tick_degrees == 3)[0]
     deg4 = np.where(tick_degrees == 4)[0]
     passes = np.array(
         [_split_degree3(int(v), tick_graph, tick_vertices,
                         direction_span=args.direction_span,
-                        min_branch_angle=args.min_branch_angle) is not None
+                        min_branch_angle=args.min_branch_angle,
+                        min_daughter_length=args.min_daughter_length) is not None
          for v in deg3],
         dtype=bool,
     )
@@ -107,7 +103,7 @@ def main():
     )
     print(f"degree 3: {len(deg3)} ({int(passes.sum())} separated), degree 4: {len(deg4)}")
 
-    # small instances left after splitting, by contour length in A
+    # small fragments after splitting, by contour length in A
     clean_coords = clean_vertices / args.pixel_size
     n_instances = int(labels.max()) + 1
     seg_lengths = np.linalg.norm(
@@ -130,10 +126,15 @@ def main():
     if mask is not None:
         viewer.add_labels(mask.astype(np.uint8), name="mask", opacity=0.4)
 
+    radius = (args.circle_size / 2) / args.pixel_size
     if len(clean_edges):
-        inst = draw_instances(clean_coords, clean_edges, labels, shape,
-                              (args.circle_size / 2) / args.pixel_size)
+        inst = draw_instances(clean_coords, clean_edges, labels, shape, radius)
         viewer.add_labels(inst, name="instances")
+
+    if small_mask.any():
+        frag_edges = clean_edges[small_mask[clean_edges[:, 0]]]
+        frag = draw_instances(clean_coords, frag_edges, labels, shape, radius)
+        viewer.add_labels(frag, name="small fragments")
 
     def add_junctions(name, coords, color, angle=None):
         kwargs = dict(
@@ -152,8 +153,6 @@ def main():
                       branch_angles[~passes])
     if len(deg4):
         add_junctions("deg4", tick_coords[deg4], DEG4_COLOR)
-    if small_mask.any():
-        add_junctions("small fragments", clean_coords[small_mask], FRAGMENT_COLOR)
 
     napari.run()
 
