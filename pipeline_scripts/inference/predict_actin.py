@@ -17,9 +17,10 @@ def parse_args():
     parser.add_argument("--data_root", type=str, required=True)
     parser.add_argument("--real_dataset", type=str, required=True)
     parser.add_argument("--run", type=int, required=True)
-    
+
     parser.add_argument("--checkpoint", type=str, default=None)
     parser.add_argument("--threshold", type=float, default=0.5)
+    parser.add_argument("--use_sample_mask", action="store_true", help="Mask the prediction with sample_mask.")
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument("--data_dir", type=str, default=None)
     group.add_argument("--data_paths", type=str, nargs="+")
@@ -115,7 +116,7 @@ def main():
         data_paths = sorted((DATA_ROOT / "predictions" / args.real_dataset).glob("*.h5"))
 
     if not data_paths:
-        raise FileNotFoundError(f"No h5 files found.")
+        raise FileNotFoundError("No h5 files found.")
 
     rows = []
     print(f"\nRunning predictions using model {model_name}.\n")
@@ -127,19 +128,20 @@ def main():
             raw = f["raw"][:]
             has_labels = "labels/actin" in f
             gt = f["labels/actin"][:] if has_labels else None
-            #mask = f["sample_mask"][:] if "sample_mask" in f else None
+            mask = f["sample_mask"][:] if args.use_sample_mask and "sample_mask" in f else None
             pred_key = f"predictions/{model_name}"
             pred = f[pred_key][:] if pred_key in f else None
 
-        if pred is not None and threshold is not None:
-            print(f"Thresholding stored predictions (threshold={threshold})\n")
-            seg = (pred > threshold).astype(bool)
+        if pred is not None:
+            print(f"Using stored predictions (threshold={threshold})\n")
         else:
-            seg, pred = segment_actin(
+            _, pred = segment_actin(
                 raw, checkpoint, foreground_threshold=threshold, verbose=True, return_predictions=True
             )
-        #if mask is not None:
-        #    seg = seg * mask.astype(seg.dtype)
+
+        if mask is not None:
+            pred = pred * mask.astype(pred.dtype)
+        seg = (pred > threshold).astype(bool)
 
         if has_labels:
             m = compute_metrics(seg, gt)
@@ -157,7 +159,7 @@ def main():
             if seg_key not in f:
                 f.create_dataset(seg_key, data=seg, compression="gzip")
             if pred_key not in f:
-                f.create_dataset(f"predictions/{model_name}", data=pred, compression="gzip")
+                f.create_dataset(pred_key, data=pred, compression="gzip")
 
     if rows:
         print("\n--- Summary ---")
