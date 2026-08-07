@@ -1,3 +1,4 @@
 *.png
 slurm-*.out
 slurm-*.json
+__pycache__/
