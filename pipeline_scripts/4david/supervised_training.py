@@ -19,8 +19,8 @@ def parse_args():
     parser.add_argument("--val_folder", type=str, default=None, help="Directory with validation raw tomograms. If not given, train_folder is split using val_fraction.")  # noqa
     parser.add_argument("--val_label_folder", type=str, default=None, help="Directory with validation labels. Required if val_folder is given.")  # noqa
     parser.add_argument("--val_fraction", type=float, default=0.15, help="Fraction of train_folder held out for validation. Ignored if val_folder is given.")  # noqa
-    parser.add_argument("--raw_pattern", type=str, default="*.mrc", help="Glob pattern for raw tomogram files.")  # noqa
-    parser.add_argument("--label_pattern", type=str, default="*.mrc", help="Glob pattern for label files.")  # noqa
+    parser.add_argument("--raw_pattern", type=str, default="*.mrc", dest="image_file_pattern", help="Glob pattern for raw tomogram files.")  # noqa
+    parser.add_argument("--label_pattern", type=str, default="*.mrc", dest="label_file_pattern", help="Glob pattern for label files.")  # noqa
     parser.add_argument("--patch_shape", type=int, nargs=3, default=[64, 256, 256])
     parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--lr", type=float, default=1e-4)
