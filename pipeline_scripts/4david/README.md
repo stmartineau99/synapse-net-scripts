@@ -44,7 +44,7 @@ data/
         └── tomo_03.mrc
 ```
 
-## Training (`supervised_training.py`)
+## Training
 
 ```
 python supervised_training.py --config configs/example.toml
@@ -70,7 +70,7 @@ Before a real training run use `--check` to visualize a few samples from the dat
 
 The model checkpoint can be found at `<output_dir>/checkpoints/<name>`.
 
-## Inference (`inference.py`)
+## Inference
 
 ```
 python inference.py 
