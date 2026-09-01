@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import configargparse
 
 from synapse_net.training import supervised_training
@@ -8,17 +10,15 @@ def parse_args():
     parser = configargparse.ArgParser(
         config_file_parser_class=configargparse.TomlConfigParser(["supervised_training"])
     )
-    parser.add_argument(
-        "--config", is_config_file_arg=True, help="Path to TOML config file."
-    )
+    parser.add_argument("--config", is_config_file_arg=True, help="Path to TOML config file.")
 
     parser.add_argument("--name", type=str, required=True, help="Name for the model checkpoint.")
     parser.add_argument("--output_dir", type=str, required=True, help="Directory where the checkpoint will be saved.")  # noqa
-    parser.add_argument("--train_folder", type=str, required=True, help="Directory with training raw tomograms.")
-    parser.add_argument("--label_folder", type=str, required=True, help="Directory with training labels.")
-    parser.add_argument("--val_folder", type=str, default=None, help="Directory with validation raw tomograms. If not given, train_folder is split using val_fraction.")  # noqa
-    parser.add_argument("--val_label_folder", type=str, default=None, help="Directory with validation labels. Required if val_folder is given.")  # noqa
-    parser.add_argument("--val_fraction", type=float, default=0.15, help="Fraction of train_folder held out for validation. Ignored if val_folder is given.")  # noqa
+    parser.add_argument("--train_dir", type=str, required=True, dest="train_folder", help="Directory with training raw tomograms.")  # noqa
+    parser.add_argument("--train_label_dir", type=str, required=True, dest="label_folder", help="Directory with training labels.")  # noqa
+    parser.add_argument("--val_dir", type=str, default=None, dest="val_folder", help="Directory with validation raw tomograms. If not given, train_dir is split using val_fraction.")  # noqa
+    parser.add_argument("--val_label_dir", type=str, default=None, dest="val_label_folder", help="Directory with validation labels. Required if val_dir is given.")  # noqa
+    parser.add_argument("--val_fraction", type=float, default=0.2, help="Fraction of train_dir held out for validation. Ignored if val_dir is given.")  # noqa
     parser.add_argument("--raw_pattern", type=str, default="*.mrc", dest="image_file_pattern", help="Glob pattern for raw tomogram files.")  # noqa
     parser.add_argument("--label_pattern", type=str, default="*.mrc", dest="label_file_pattern", help="Glob pattern for label files.")  # noqa
     parser.add_argument("--patch_shape", type=int, nargs=3, default=[64, 256, 256])

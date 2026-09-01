@@ -1,14 +1,15 @@
 # supervised training pipeline
 [supervised_training]
-name = "actin-nf-run1"
+name = "nf-run1"
 output_dir = "/path/to/your/output"
-train_folder = "/path/to/your/data/train/raw"
-label_folder = "/path/to/your/data/train/labels"
-val_folder = "/path/to/your/data/val/raw"
-val_label_folder = "/path/to/your/data/val/labels"
+train_dir = "/path/to/your/data/train/raw"
+train_label_dir = "/path/to/your/data/train/labels"
+val_dir = "/path/to/your/data/val/raw"
+val_label_dir = "/path/to/your/data/val/labels"
+val_fraction = 0.2
 raw_pattern = "*.mrc"
 label_pattern = "*.mrc"
 patch_shape = [64, 256, 256]
 batch_size = 1
 lr = 1e-4
-n_iterations = 10_000
+n_iterations = 25_000
