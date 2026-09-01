@@ -60,6 +60,7 @@ python supervised_training.py --config configs/example.toml
 | `train_label_dir` | Directory with training labels. |
 | `val_dir` | Directory with validation raw tomograms. |
 | `val_label_dir` | Directory with validation labels. Required if `val_dir` is given. |
+| `val_fraction` | Fraction of `train_dir` held out for validation. Ignored if `val_dir` is given. Default `0.2`. |
 | `patch_shape` | Training patch shape `[z, y, x]`. Default `[64, 256, 256]`. |
 | `batch_size` | Training batch size. |
 | `lr` | Learning rate. |
