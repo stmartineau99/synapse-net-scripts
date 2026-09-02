@@ -1,4 +1,4 @@
-# U-Net Training Tutorial for David
+# U-Net Training Tutorial
 
 Train and run a filament segmentation model on your own mrc tomograms.
 
