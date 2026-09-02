@@ -1,6 +1,6 @@
 # U-Net Training Tutorial
 
-Train and run a filament segmentation model on your own mrc tomograms.
+Train and run a filament segmentation model.
 
 ## Requirements
 
@@ -24,7 +24,7 @@ conda activate synapse-net
 pip install .
 ```
 
-## Input data
+## Inputs
 
 Input raw tomograms and label volumes are both `.mrc` files. `raw` and `labels` (and `masks`, used for restricting the output during inference) are paired by sorted order within each directory, so use matching filenames across directories, for example:
 
@@ -89,9 +89,9 @@ Optional arguments:
 
 One `.h5` file is created per input tomogram, written to `output_dir`, containing:
 
-- `raw` - input tomogram.
-- `predictions/<model>` - raw foreground prediction.
-- `segmentations/<model>` - thresholded segmentation.
-- `labels/gt` - ground truth labels.
+- `raw` - input tomogram
+- `predictions/<model>` - raw foreground prediction
+- `segmentations/<model>` - thresholded segmentation
+- `labels/gt` - ground truth labels
 
 If `--label_dir` is given, per-tomogram metrics are saved to `metrics.csv`, including dice, precision, and recall. 
