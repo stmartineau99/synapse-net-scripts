@@ -7,9 +7,7 @@ Original authors: Robert Kiewisz, Tristan Bepler (MIT License 2021-2025)
 
 from math import pow, sqrt
 from typing import Tuple, Iterable, Union
-
 import numpy as np
-
 
 def draw_instances(
     mask_size: Union[list, tuple],
@@ -32,7 +30,7 @@ def draw_instances(
     :param coordinate: An array of coordinates specifying the locations to draw the mask,
         shape [Label x Z x Y x X].
     :type coordinate: np.ndarray
-    :param pixel_size: Size of a pixel in the mask, used to scale the mask appropriately.
+    :param pixel_size: Pixel size of the mask, used to scale the mask appropriately.
     :type pixel_size: float
     :param circle_size: Diameter of the sphere to be drawn at each coordinate point. Defaults to 250.
     :type circle_size: int, optional
@@ -51,68 +49,70 @@ def draw_instances(
                 f"shape [Label x Z x Y x X] but {coordinate.shape} given!"
             )
 
-    if label:
         label_mask = np.zeros(mask_size, dtype=np.uint16 if dtype is None else dtype)
-    else:
-        label_mask = np.zeros(mask_size, dtype=np.uint8 if dtype is None else dtype)
 
-    if pixel_size == 0:
-        pixel_size = 1
-
-    r = (circle_size // 2) // pixel_size
-
-    # Number of segments in coordinates
-    if label:
         segments = np.unique(coordinate[:, 0])
 
         for i in segments:
-            # Pick coordinates for each segment
-            points = coordinate[np.where(coordinate[:, 0] == i)[0]][:, 1:]
+            pts = coordinate[np.where(coordinate[:, 0] == i)[0]][:, 1:]
 
-            label = interpolation(points)
-            all_cz, all_cy, all_cx = [], [], []
+            all_cz, all_cy, all_cx = draw_filament(pts, label_mask, pixel_size, circle_size=circle_size)
 
-            for j in range(len(label)):
-                c = label[j, :]  # Point center
-                cz, cy, cx = draw_mask(r=r, c=c, label_mask=label_mask)
-                all_cz.append(cz)
-                all_cy.append(cy)
-                all_cx.append(cx)
-
-            all_cz, all_cy, all_cx = (
-                np.concatenate(all_cz),
-                np.concatenate(all_cy),
-                np.concatenate(all_cx),
-            )
             label_mask[all_cz, all_cy, all_cx] = i + 1
 
         return label_mask
     else:
-        all_cz, all_cy, all_cx = [], [], []
+        label_mask = np.zeros(mask_size, dtype=np.uint8 if dtype is None else dtype)
 
-        for c in coordinate:
-            cz, cy, cx = draw_mask(r=r, c=c, label_mask=label_mask)
-            all_cz.append(cz)
-            all_cy.append(cy)
-            all_cx.append(cx)
-
-        all_cz, all_cy, all_cx = (
-            np.concatenate(all_cz),
-            np.concatenate(all_cy),
-            np.concatenate(all_cx),
-        )
+        all_cz, all_cy, all_cx = draw_filament(coordinate, label_mask, pixel_size, circle_size=circle_size)
         label_mask[all_cz, all_cy, all_cx] = 1
 
-        return np.where(label_mask == 1, 1, 0).astype(np.uint8)
+        return label_mask
 
 
-def draw_mask(
-    r: int, c: np.ndarray, label_mask: np.ndarray
+def draw_filament(
+    coordinates: np.ndarray, mask: np.ndarray, pixel_size: float, circle_size=70, interpolate=True,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
-    Draws a sphere mask on the given label array.
+    Draws spheres along a filament and returns the covered voxel indices.
 
-    :param r: The radius of the sphere in voxels.
+    :param coordinates: Filament points of shape (N, 3) as [Z x Y x X].
+    :param mask: The 3D mask the filament will be drawn into.
+    :param pixel_size: Pixel size of the mask, used to scale the sphere radius.
+    :param circle_size: Diameter of the sphere drawn at each point.
+    :return: A tuple of (cz, cy, cx) index arrays for the covered voxels.
+    """
+    if pixel_size == 0:
+        pixel_size = 1
+
+    r = circle_size / 2
+
+    all_cz, all_cy, all_cx = [], [], []
+
+    if interpolate:
+        coordinates = interpolation(coordinates)
+    for c in coordinates:
+        cz, cy, cx = draw_sphere(radius=r, coordinates=c, label_mask=mask, pixel_size=pixel_size)
+        all_cz.append(cz)
+        all_cy.append(cy)
+        all_cx.append(cx)
+
+    all_cz, all_cy, all_cx = (
+        np.concatenate(all_cz),
+        np.concatenate(all_cy),
+        np.concatenate(all_cx),
+    )
+
+    return all_cz, all_cy, all_cx
+
+
+def draw_sphere(
+    radius: int, coordinates: np.ndarray, label_mask: np.ndarray, pixel_size: int
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Return coordinates of a sphere centered at c.
+
+    :param r: The radius of the sphere in Angstrom.
     :param c: A numpy array containing the center coordinates [z, y, x].
     :param label_mask: A numpy array representing the label mask (3D).
     :return: A tuple of (cz, cy, cx) index arrays for the sphere voxels.
@@ -120,69 +120,27 @@ def draw_mask(
     if label_mask.ndim != 3:
         raise ValueError(f"Unsupported dimensions {label_mask.ndim}, expected 3.")
 
-    z = int(c[0])
-    y = int(c[1])
-    x = int(c[2])
+    # sphere bounding box centered at the origin
+    r = int(np.ceil(radius / pixel_size))
+    offsets = np.arange(-r, r + 1)
+    Z, Y, X = np.meshgrid(offsets, offsets, offsets, indexing="ij")
 
-    cz, cy, cx = draw_sphere(r=r, c=(z, y, x), shape=label_mask.shape)
-    return cz, cy, cx
+    # sphere test based on the physical radius
+    distance = np.sqrt(
+        (Z * pixel_size) ** 2 +
+        (Y * pixel_size) ** 2 +
+        (X * pixel_size) ** 2
+    )
+    sphere = distance <= radius
 
-def draw_sphere(
-    r: int, c: tuple, shape: tuple
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """
-    Generates the coordinates of a 3D spherical structure within a volume of specified shape.
-    This function simulates a sphere using a 3D binary array, applies trimming to the sphere,
-    and shifts its position within a given coordinate frame. The output consists of the
-    adjusted coordinates of the sphere within the specified 3D volume.
+    sphere_offsets = np.argwhere(sphere) - r
+    c = coordinates + sphere_offsets
 
-    :param r: Radius of the sphere
-    :type r: int
-    :param c: Center coordinates of the sphere in the 3D volume as (z, y, x)
-    :type c: tuple
-    :param shape: Shape of the 3D volume to contain the sphere
-    :type shape: tuple
+    # remove negative and out of frame coordinates
+    valid = np.all((c >= 0) & (c < np.asarray(label_mask.shape)), axis=1)
+    c = c[valid]
 
-    :return: Coordinates of the sphere within the 3D volume along z, y, and x axes
-    :rtype: tuple of numpy.ndarray
-    """
-    r_dim = round(r * 2)
-    sphere_frame = np.zeros((r_dim, r_dim, r_dim), dtype=np.int8)
-    trim = round(r_dim / 6)
-    c_frame = round(r)
-
-    z, y, x = sphere_frame.shape
-    for z_dim in range(z):
-        for y_dim in range(y):
-            for x_dim in range(x):
-                dist_zyx_to_c = sqrt(
-                    pow(abs(z_dim - c_frame), 2)
-                    + pow(abs(y_dim - c_frame), 2)
-                    + pow(abs(x_dim - c_frame), 2)
-                )
-                if dist_zyx_to_c > c_frame:
-                    sphere_frame[z_dim, y_dim, x_dim] = False
-                else:
-                    sphere_frame[z_dim, y_dim, x_dim] = True
-    sphere_frame[:trim, :] = False  # Trim bottom of the sphere
-    sphere_frame[-trim:, :] = False  # Trim top of the sphere
-    z, y, x = np.where(sphere_frame)
-
-    c = ((c[0] - c_frame), (c[1] - c_frame), (c[2] - c_frame))
-    z, y, x = z + c[0], y + c[1], x + c[2]
-
-    # Remove pixel out of frame
-    zyx = np.array((z, y, x)).T
-    del_id = []
-    for id_, i in enumerate(zyx):
-        if i[0] >= shape[0] or i[1] >= shape[1] or i[2] >= shape[2]:
-            del_id.append(id_)
-        if i[0] < 0:  # Remove negative value
-            del_id.append(id_)
-
-    zyx = np.delete(zyx, del_id, 0)
-
-    return zyx[:, 0], zyx[:, 1], zyx[:, 2]
+    return c[:, 0], c[:, 1], c[:, 2]
 
 def interpolation(points: np.ndarray) -> np.ndarray:
     """
@@ -205,6 +163,7 @@ def interpolation(points: np.ndarray) -> np.ndarray:
     new_coord.append(list(np.round(points[-1, :]).astype(np.int32)))
 
     return np.vstack(new_coord)
+
 
 def interpolate_generator(points: np.ndarray) -> Iterable:
     """
