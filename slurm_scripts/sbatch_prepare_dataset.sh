@@ -15,4 +15,4 @@ SCRIPT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scr
 
 cd $SCRIPT_DIR
 
-python prepare_opto_subvolumes.py
+python prepare_deepict_subvolumes.py
