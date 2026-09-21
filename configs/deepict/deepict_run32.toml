@@ -3,7 +3,7 @@
 [run_info]
 data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
 synthetic_dataset = "deepict_dataset_5"
-real_dataset = "deepict"
+dataset = "deepict"
 run = 32
 
 [supervised_training]

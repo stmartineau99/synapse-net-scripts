@@ -15,7 +15,7 @@ the scripts that call them.
 ## Experimental datasets
 
 The short name is referenced by `./configs/<dataset>/`, `data/experimental/<dataset>/`, and the
-`real_dataset` key. Some short names are aliases for a full name.
+`dataset` key. Some short names are aliases for a full name.
 
 - `deepict`
 - `opto`, alias for optogenetics
@@ -45,14 +45,14 @@ Synthetic branch:
 | Script | Reads | Writes |
 |---|---|---|
 | `prepare_training.py` | `data/simulation/<synthetic_dataset>/` tomograms and masks | `data/training/<synthetic_dataset>/{train,val,test}/*.h5` |
-| `supervised_training.py` | `data/training/<synthetic_dataset>/{train,val}/*.h5` | `data/training/out/<real_dataset>/run<N>/checkpoints/` |
+| `supervised_training.py` | `data/training/<synthetic_dataset>/{train,val}/*.h5` | `data/training/out/<dataset>/run<N>/checkpoints/` |
 
 Experimental branch:
 
 | Script | Reads | Writes |
 |---|---|---|
 | `prepare_<dataset>.py` | raw data mrc and labels | `data/experimental/<dataset>/h5/*.h5` |
-| `domain_adaptation.py` | data in h5, plus a supervised checkpoint as the source | `data/training/out/<real_dataset>/run<N>/checkpoints/` |
+| `domain_adaptation.py` | data in h5, plus a supervised checkpoint as the source | `data/training/out/<dataset>/run<N>/checkpoints/` |
 
 Inference and analysis:
 
@@ -71,14 +71,14 @@ the consuming script.
 
 | Section | Read by |
 |---|---|
-| `[run_info]` | every config-driven script; holds `data_root`, `synthetic_dataset`, `real_dataset`, `run` |
+| `[run_info]` | every config-driven script; holds `data_root`, `synthetic_dataset`, `dataset`, `run` |
 | `[prepare_training]` | `prepare_training.py` |
 | `[supervised_training]` | `supervised_training.py` |
 | `[domain_adaptation]` | `domain_adaptation.py` |
 
 `run<N>` identifies one experiment. The number must agree in the config path
 `./configs/<dataset>/<dataset>_run<N>.toml`, the `run` key inside it, the output tree
-`data/training/out/<real_dataset>/run<N>/`, and the model name `<structure>-<real_dataset>-run<N>`.
+`data/training/out/<dataset>/run<N>/`, and the model name `<structure>-<dataset>-run<N>`.
 The counter is per dataset. Never reuse a number.
 
 Domain adaptation mode is inferred, not passed. `supervised_train_glob` present means SSDA,

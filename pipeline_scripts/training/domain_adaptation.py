@@ -26,7 +26,7 @@ def parse_args():
     # run_info
     parser.add_argument("--data_root", type=str, required=True)
     parser.add_argument("--synthetic_dataset", type=str, required=True)
-    parser.add_argument("--real_dataset", type=str, required=True)
+    parser.add_argument("--dataset", type=str, required=True)
     parser.add_argument("--run", type=int, required=True)
 
     # domain_adaptation
@@ -54,7 +54,7 @@ def parse_args():
 def main():
     args = parse_args()
 
-    data_dir = Path(args.data_dir) if args.data_dir else Path(args.data_root) / "experimental" / args.real_dataset / "h5"
+    data_dir = Path(args.data_dir) if args.data_dir else Path(args.data_root) / "experimental" / args.dataset / "h5"
 
     if args.check:
         args.batch_size = 1
@@ -64,8 +64,8 @@ def main():
     
     mode = "SSDA" if args.supervised_train_glob is not None else "USDA"
 
-    run_name = f"actin-{args.real_dataset}-run{args.run}"
-    out_dir = Path(args.data_root) / "training" / "out" / args.real_dataset / f"run{args.run}"
+    run_name = f"actin-{args.dataset}-run{args.run}"
+    out_dir = Path(args.data_root) / "training" / "out" / args.dataset / f"run{args.run}"
 
     if args.source_checkpoint:
         source_checkpoint = args.source_checkpoint

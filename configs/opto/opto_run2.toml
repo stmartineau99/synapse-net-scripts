@@ -3,7 +3,7 @@
 [run_info]
 data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
 synthetic_dataset = "opto_dataset_0"                                         # overrride with `data_dir`
-real_dataset = "opto"
+dataset = "opto"
 run = 2
 
 [supervised_training]

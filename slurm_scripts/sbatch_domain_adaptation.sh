@@ -12,7 +12,7 @@
 source ~/.bashrc
 micromamba activate synapse-net
 
-SCRIPT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/pipeline_scripts
+SCRIPT_DIR=/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/synapse-net-scripts/pipeline_scripts/training
 
 cd $SCRIPT_DIR
 

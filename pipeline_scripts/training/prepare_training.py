@@ -17,7 +17,7 @@ def parse_args():
     # run_info
     parser.add_argument("--data_root", type=str, required=True)
     parser.add_argument("--synthetic_dataset", type=str, required=True)
-    parser.add_argument("--real_dataset", type=str, required=True)
+    parser.add_argument("--dataset", type=str, required=True)
     parser.add_argument("--run", type=int, required=True)
 
     # prepare_training

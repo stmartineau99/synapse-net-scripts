@@ -17,7 +17,7 @@ def parse_args():
     # run_info
     parser.add_argument("--data_root", type=str, required=True)
     parser.add_argument("--synthetic_dataset", type=str, required=True)
-    parser.add_argument("--real_dataset", type=str, required=True)
+    parser.add_argument("--dataset", type=str, required=True)
     parser.add_argument("--run", type=int, required=True)
 
     # optional overrides
@@ -103,7 +103,7 @@ def main():
     print(f"Found {len(data_paths)} test files in {test_dir}")
     print(f"Checkpoint: {checkpoint}")
 
-    out_dir = data_root / "predictions" / args.real_dataset
+    out_dir = data_root / "predictions" / args.dataset
     rows = []
 
     for p in data_paths:
