@@ -1,0 +1,22 @@
+[run_info]
+data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
+synthetic_dataset = "deepict_dataset_9"
+dataset = "deepict"
+run = 37
+
+[semisupervised_learning]
+backbone = "sam"
+data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/reconstructed_10A/h5/subvolumes"
+train_glob = "train/*.h5"
+val_glob = "val/*.h5"
+supervised_train_glob = "train/*.h5"
+supervised_val_glob = "val/*.h5"
+raw_key = "raw"
+label_key = "/labels/actin"
+patch_shape = [64, 256, 256]
+batch_size = 2
+lr = 1e-4
+n_iterations = 10_000
+teacher_warmup_iterations = 1_000
+confidence_threshold = 0.9
+labeled_fraction = 1.0

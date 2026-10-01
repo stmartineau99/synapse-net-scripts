@@ -7,6 +7,12 @@ from torch_em.data.sampler import MinForegroundSampler
 
 LABELED_FRACTION_SEED = 42
 
+BACKBONE_MODEL_TYPES = {
+    "sam": "vit_b_em_organelles",
+    "sam2": "hvit_b",
+    "dinov3": "vit_b",
+}
+
 
 def has_label_key(path, label_key):
     with h5py.File(path, "r") as f:
@@ -30,6 +36,7 @@ def parse_args():
     # semisupervised_learning
     parser.add_argument("--data_dir", type=str, default=None)
     parser.add_argument("--source_checkpoint", type=str, default=None)
+    parser.add_argument("--backbone", type=str, default=None, choices=list(BACKBONE_MODEL_TYPES))
     parser.add_argument("--train_glob", type=str, default="*.h5")
     parser.add_argument("--val_glob", type=str, default="*.h5")
     parser.add_argument("--supervised_train_glob", type=str, required=True)
@@ -101,6 +108,8 @@ def main():
         teacher_warmup_iterations=args.teacher_warmup_iterations,
         source_checkpoint=args.source_checkpoint,
         supervised_sampler=sampler,
+        backbone=args.backbone,
+        model_type=BACKBONE_MODEL_TYPES.get(args.backbone),
         check=args.check,
     )
 
