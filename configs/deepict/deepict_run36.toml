@@ -2,7 +2,7 @@
 data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
 synthetic_dataset = "deepict_dataset_9"
 dataset = "deepict"
-run = 35
+run = 36
 
 [semisupervised_learning]
 data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/reconstructed_10A/h5/subvolumes"
@@ -18,4 +18,4 @@ lr = 1e-4
 n_iterations = 10_000
 teacher_warmup_iterations = 1_000
 confidence_threshold = 0.9
-labeled_fraction = 0.25
+labeled_fraction = 1.0

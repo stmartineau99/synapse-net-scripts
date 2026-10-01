@@ -3,6 +3,7 @@ import h5py
 import configargparse
 from pathlib import Path
 from synapse_net.training.semisupervised_training import semisupervised_training
+from torch_em.data.sampler import MinForegroundSampler
 
 LABELED_FRACTION_SEED = 42
 
@@ -79,6 +80,8 @@ def main():
         supervised_train_paths = sorted(rng.sample(supervised_train_paths, n_train))
         supervised_val_paths = sorted(rng.sample(supervised_val_paths, n_val))
 
+    sampler = MinForegroundSampler(min_fraction=0.025, p_reject=0.95)
+
     print(f"Running semisupervised training for {args.run}.")
 
     semisupervised_training(
@@ -97,6 +100,7 @@ def main():
         n_iterations=args.n_iterations,
         teacher_warmup_iterations=args.teacher_warmup_iterations,
         source_checkpoint=args.source_checkpoint,
+        supervised_sampler=sampler,
         check=args.check,
     )
 
