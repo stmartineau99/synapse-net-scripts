@@ -4,3 +4,4 @@ slurm-*.json
 __pycache__/
 .ipynb_checkpoints/
 slurm_logs/
+scratch/

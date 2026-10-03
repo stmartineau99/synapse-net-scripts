@@ -2,7 +2,7 @@
 data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
 synthetic_dataset = "deepict_dataset_9"
 dataset = "deepict"
-run = 39
+run = 40
 
 [semisupervised_learning]
 backbone = "dinov3"
@@ -13,7 +13,7 @@ supervised_train_glob = "train/*.h5"
 supervised_val_glob = "val/*.h5"
 raw_key = "raw"
 label_key = "/labels/actin"
-patch_shape = [4, 256, 256]
+patch_shape = [12, 256, 256]
 batch_size = 1
 lr = 1e-4
 n_iterations = 2_000
@@ -32,7 +32,7 @@ env = "synapse-net-backbones"
 [jobs.semisupervised_learning]
 script = "pipeline_scripts/training/semisupervised_training.py"
 slurm_profile = "grete_a100_80gb"
-slurm = { time = "03:00:00" }
+slurm = { time = "06:00:00" }
 
 [jobs.predict_actin]
 script = "pipeline_scripts/inference/predict_actin.py"
