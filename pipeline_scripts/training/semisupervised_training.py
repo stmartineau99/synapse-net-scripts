@@ -13,7 +13,6 @@ BACKBONE_MODEL_TYPES = {
     "dinov3": "vit_b",
 }
 
-
 def has_label_key(path, label_key):
     with h5py.File(path, "r") as f:
         return label_key in f
@@ -50,6 +49,8 @@ def parse_args():
     parser.add_argument("--teacher_warmup_iterations", type=int, default=1000)
     parser.add_argument("--confidence_threshold", type=float, default=0.9)
     parser.add_argument("--labeled_fraction", type=float, default=1.0)
+    parser.add_argument("--use_sample_mask", action="store_true", default=False)
+    parser.add_argument("--sample_mask_key", type=str, default="sample_mask")
     parser.add_argument("--check", action="store_true", default=False)
 
     return parser.parse_args()
@@ -87,7 +88,13 @@ def main():
         supervised_train_paths = sorted(rng.sample(supervised_train_paths, n_train))
         supervised_val_paths = sorted(rng.sample(supervised_val_paths, n_val))
 
-    sampler = MinForegroundSampler(min_fraction=0.025, p_reject=0.95)
+    supervised_sampler = MinForegroundSampler(min_fraction=0.025, p_reject=0.95)
+
+    if args.use_sample_mask:
+        unsupervised_sampler = MinForegroundSampler(min_fraction=0.5)
+        train_mask_paths, val_mask_paths = unsupervised_train_paths, unsupervised_val_paths
+    else:
+        unsupervised_sampler, train_mask_paths, val_mask_paths = None, None, None
 
     print(f"Running semisupervised training for {args.run}.")
 
@@ -107,7 +114,11 @@ def main():
         n_iterations=args.n_iterations,
         teacher_warmup_iterations=args.teacher_warmup_iterations,
         source_checkpoint=args.source_checkpoint,
-        supervised_sampler=sampler,
+        supervised_sampler=supervised_sampler,
+        unsupervised_sampler=unsupervised_sampler,
+        train_mask_paths=train_mask_paths,
+        val_mask_paths=val_mask_paths,
+        sample_mask_key=args.sample_mask_key,
         backbone=args.backbone,
         model_type=BACKBONE_MODEL_TYPES.get(args.backbone),
         check=args.check,

@@ -20,3 +20,4 @@ n_iterations = 10_000
 teacher_warmup_iterations = 1_000
 confidence_threshold = 0.9
 labeled_fraction = 1.0
+use_sample_mask = true
