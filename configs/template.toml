@@ -49,3 +49,26 @@ supervised_train_glob = "*.h5"
 supervised_val_glob = "*.h5"
 label_key = "/labels/actin"
 raw_key_supervised = "raw"
+
+# One table per job, submitted with: python slurm_scripts/submit.py <config> --job <name>
+# Optional per job: env (overrides [jobs].env), slurm = {...} (overrides the profile), args = {...} (flags after --config)
+[jobs]
+env = "synapse-net"
+
+[jobs.prepare_training]
+script = "pipeline_scripts/training/prepare_training.py"
+slurm_profile = "cpu_large96s"
+
+[jobs.supervised_training]
+script = "pipeline_scripts/training/supervised_training.py"
+slurm_profile = "grete_a100_80gb"
+
+[jobs.domain_adaptation]
+script = "pipeline_scripts/training/domain_adaptation.py"
+slurm_profile = "grete_a100_80gb"
+slurm = { cpus = 12, mem = "20G" }
+
+[jobs.predict_actin]
+script = "pipeline_scripts/inference/predict_actin.py"
+slurm_profile = "grete_interactive"
+args = { data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/h5/subvolumes/train" }

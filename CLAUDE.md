@@ -32,7 +32,7 @@ Run every Python command in the `synapse-net` micromamba environment, not in `su
 |---|---|
 | `pipeline_scripts/` | the maintained scripts, in `prepare_datasets/`, `inference/`, `analysis/`, plus the config-driven top level |
 | `configs/` | one TOML per run, grouped by experiment dataset |
-| `slurm_scripts/` | job submission |
+| `slurm_scripts/` | job submission: `submit.py`, resource presets in `profiles/`, the old sbatch scripts in `deprecated/` |
 | `experiments/` | experiment logs and exploratory work, each with its own README |
 | `evaluation_results/`, `notebooks/`, `slurm_logs/`, `slurm_metrics/` | outputs and scratch |
 
@@ -75,6 +75,7 @@ the consuming script.
 | `[prepare_training]` | `prepare_training.py` |
 | `[supervised_training]` | `supervised_training.py` |
 | `[domain_adaptation]` | `domain_adaptation.py` |
+| `[jobs]` | `slurm_scripts/submit.py` only; no pipeline script reads it |
 
 `run<N>` identifies one experiment. The number must agree in the config path
 `./configs/<dataset>/<dataset>_run<N>.toml`, the `run` key inside it, the output tree
@@ -86,3 +87,23 @@ absent means USDA.
 
 Not every script is config driven. Scripts in `prepare_datasets/` are dataset-specific and have
 hardcoded paths and module-level constants.
+
+## Submitting jobs
+
+A run config states how its jobs are submitted. `[jobs].env` is the micromamba env. Each
+`[jobs.<name>]` table has a `script`, relative to the repository root, and a `slurm_profile`, a file
+in `slurm_scripts/profiles/`. Optional keys: `env`, `slurm = {...}` merged over the profile, and
+`args = {...}` for flags after `--config`. See `configs/template.toml`.
+
+```bash
+python slurm_scripts/submit.py configs/deepict/deepict_run39.toml --dry_run
+python slurm_scripts/submit.py configs/deepict/deepict_run39.toml
+python slurm_scripts/submit.py <config> --job supervised_training --profile grete_a100_80gb
+```
+
+`--job` is needed only if the config has more than one job. The generated `.sh` and the job
+output go to `slurm_logs/<config>_<job>_<timestamp>.{sh,out}`. Loader checks (`--check`) are not
+submitted. The user runs them directly on the Jupyter desktop.
+
+The scripts in `prepare_datasets/` and `analysis/` are not config driven and keep their own
+`slurm_scripts/sbatch_*.sh`.

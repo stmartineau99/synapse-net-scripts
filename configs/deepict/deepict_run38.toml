@@ -21,3 +21,10 @@ teacher_warmup_iterations = 1_000
 confidence_threshold = 0.9
 labeled_fraction = 1.0
 use_sample_mask = true
+
+[jobs]
+env = "synapse-net-backbones"
+
+[jobs.semisupervised_learning]
+script = "pipeline_scripts/training/semisupervised_training.py"
+slurm_profile = "grete_a100_40gb"
