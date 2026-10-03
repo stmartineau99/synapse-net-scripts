@@ -96,7 +96,7 @@ def main():
     else:
         unsupervised_sampler, train_mask_paths, val_mask_paths = None, None, None
 
-    print(f"Running semisupervised training for {args.run}.")
+    print(f"Running semisupervised training for run {args.run}.")
 
     semisupervised_training(
         name=run_name,

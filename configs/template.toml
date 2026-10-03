@@ -1,51 +1,42 @@
-# actin domain adaptation pipeline
-
 [run_info]
 data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
-synthetic_dataset = "deepict_dataset_1"                                     # simulated dataset
-dataset = "deepict"                                                    # target experimental dataset
+synthetic_dataset = "deepict_dataset_9"
+dataset = "deepict"
 run = 1
 
-[prepare_training]
-n_conditions = 4
-n_tomos = 20
-# conditions = [0, 1, 2, 3]            # optional; defaults to range(n_conditions)
-train_fraction = 0.7
-val_fraction = 0.2
-test_fraction = 0.1
+[semisupervised_learning]
+# One of: sam, sam2, dinov3
+backbone = "dinov3"
+data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/reconstructed_10A/h5/subvolumes"
+train_glob = "train/*.h5"
+val_glob = "val/*.h5"
+supervised_train_glob = "train/*.h5"
+supervised_val_glob = "val/*.h5"
 raw_key = "raw"
 label_key = "/labels/actin"
-
-[supervised_training]
-# conditions = [0, 1, 2]               # optional; select a subset of conditions for training
-label_key = "/labels/actin"
 patch_shape = [64, 256, 256]
-batch_size = 4
-lr = 4e-4
-n_iterations = 50_000
-# loss_fn = "DiceLoss"                  # optional; defaults to DiceLoss
+batch_size = 1
+lr = 1e-4
+n_iterations = 10_000
+teacher_warmup_iterations = 1_000
+confidence_threshold = 0.9
+labeled_fraction = 1.0
+use_sample_mask = true
 
-[unsupervised_domain_adaptation]
-# source_checkpoint = "/override/checkpoint/path"
-train_glob = "*.h5" #TODO fix this
-val_glob = "*.h5"   #TODO fix this
-raw_key = "raw"
-sample_mask_key = "sample_mask"
-patch_shape = [64, 256, 256]
-batch_size = 2
-lr = 2e-4
+[predict_actin]
+data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/reconstructed_10A/h5/subvolumes/test"
+use_sample_mask = true
 
-[semisupervised_domain_adaptation]
-# source_checkpoint = "/override/checkpoint/path"
-train_glob = "*.h5" #TODO fix this
-val_glob = "*.h5"   #TODO fix this
-raw_key = "raw"
-sample_mask_key = "sample_mask"
-patch_shape = [64, 256, 256]
-batch_size = 2
-lr = 2e-4
-supervised_data_dir = ""               # path to directory with labeled h5 files
-supervised_train_glob = "*.h5"
-supervised_val_glob = "*.h5"
-label_key = "/labels/actin"
-raw_key_supervised = "raw"
+# Without --job, submit.py chains the jobs in this order, each after the previous one succeeds.
+# --job <name> submits one job alone.
+# Optional per job: env (overrides [jobs].env), slurm = {...} (overrides the profile)
+[jobs]
+env = "synapse-net-backbones"
+
+[jobs.semisupervised_learning]
+script = "pipeline_scripts/training/semisupervised_training.py"
+slurm_profile = "grete_a100_80gb"
+
+[jobs.predict_actin]
+script = "pipeline_scripts/inference/predict_actin.py"
+slurm_profile = "grete_interactive"
