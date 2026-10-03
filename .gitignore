@@ -2,4 +2,5 @@
 slurm-*.out
 slurm-*.json
 __pycache__/
-.ipynb_checkpoints/slurm_logs/*.out
+.ipynb_checkpoints/
+slurm_logs/
