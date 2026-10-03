@@ -24,7 +24,7 @@ The short name is referenced by `./configs/<dataset>/`, `data/experimental/<data
 
 ## Environment
 
-Run every Python command in the `synapse-net` micromamba environment, not in `super`.
+Run every Python command in the `synapse-net-backbones` micromamba environment, not in `super`.
 
 ## Directories
 
@@ -77,7 +77,7 @@ the consuming script.
 | `[domain_adaptation]` | `domain_adaptation.py` |
 | `[semisupervised_learning]` | `semisupervised_training.py` |
 | `[predict_actin]` | `predict_actin.py` |
-| `[jobs]` | `slurm_scripts/submit.py` only; no pipeline script reads it |
+| `[jobs]` | `slurm_scripts/submit.py` |
 
 `run<N>` identifies one experiment. The number must agree in the config path
 `./configs/<dataset>/<dataset>_run<N>.toml`, the `run` key inside it, the output tree
