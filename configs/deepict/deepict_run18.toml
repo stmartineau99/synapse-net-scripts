@@ -3,7 +3,7 @@
 [run_info]
 data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
 synthetic_dataset = "deepict_dataset_5"                                     # simulated dataset
-real_dataset = "deepict"                                                    # target experimental dataset
+dataset = "deepict"                                                    # target experimental dataset
 run = 18
 
 [prepare_training]

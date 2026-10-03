@@ -2,7 +2,7 @@
 [run_info]
 data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
 synthetic_dataset = "htt_dataset_0"
-real_dataset = "htt"
+dataset = "htt"
 structure = "htt"
 run = 1
 

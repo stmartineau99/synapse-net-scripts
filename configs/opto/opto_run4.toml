@@ -3,7 +3,7 @@
 [run_info]
 data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
 synthetic_dataset = "opto_dataset_0"                                         # simulated dataset
-real_dataset = "opto"                                                        # target experimental dataset
+dataset = "opto"                                                        # target experimental dataset
 run = 4
 
 [domain_adaptation]

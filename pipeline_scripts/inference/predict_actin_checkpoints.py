@@ -21,7 +21,7 @@ def parse_args():
     )
     parser.add_argument("--data_root", type=str, required=True)
     parser.add_argument("--synthetic_dataset", type=str, required=False)
-    parser.add_argument("--real_dataset", type=str, required=True)
+    parser.add_argument("--dataset", type=str, required=True)
     parser.add_argument("--run", type=int, required=True)
     parser.add_argument("--step", type=int, default=1)
     return parser.parse_args()
@@ -63,13 +63,13 @@ def plot_metrics(df, model_name, out_path):
 def main():
     args = parse_args()
     data_root = Path(args.data_root)
-    model_name = f"actin-{args.real_dataset}-run{args.run}"
+    model_name = f"actin-{args.dataset}-run{args.run}"
 
     checkpoint_dir = (
-        data_root / "training" / "out" / args.real_dataset / f"run{args.run}"
+        data_root / "training" / "out" / args.dataset / f"run{args.run}"
         / "checkpoints" / model_name
     )
-    data_dir = data_root / "predictions" / args.real_dataset
+    data_dir = data_root / "predictions" / args.dataset
     out_dir = data_dir
 
     epoch_pts = sorted(

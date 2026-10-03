@@ -2,11 +2,10 @@
 data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
 synthetic_dataset = "deepict_dataset_9"
 dataset = "deepict"
-run = 1
+run = 38
 
 [semisupervised_learning]
-# One of: sam, sam2, dinov3
-backbone = "dinov3"
+backbone = "sam2"
 data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/reconstructed_10A/h5/subvolumes"
 train_glob = "train/*.h5"
 val_glob = "val/*.h5"
@@ -27,9 +26,6 @@ use_sample_mask = true
 data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/reconstructed_10A/h5/subvolumes/test"
 use_sample_mask = true
 
-# Without --job, submit.py chains the jobs in this order, each after the previous one succeeds.
-# --job <name> submits one job alone.
-# Optional per job: env (overrides [jobs].env), slurm = {...} (overrides the profile)
 [jobs]
 env = "synapse-net-backbones"
 

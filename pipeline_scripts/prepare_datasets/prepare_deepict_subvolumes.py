@@ -47,8 +47,8 @@ def process_subvolume(input_path, output_path, q_idx):
 
 def main():
     DATA_ROOT = Path("/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data")
-    INPUT_DIR = DATA_ROOT / "experimental/deepict/h5"
-    OUTPUT_DIR = DATA_ROOT / "experimental/deepict/h5/subvolumes"
+    INPUT_DIR = DATA_ROOT / "experimental/deepict/reconstructed_10A/h5"
+    OUTPUT_DIR = DATA_ROOT / "experimental/deepict/reconstructed_10A/h5/subvolumes"
 
     n_train = round(N_QUADRANTS * TRAIN_FRACTION)
     n_val = round(N_QUADRANTS * VAL_FRACTION)

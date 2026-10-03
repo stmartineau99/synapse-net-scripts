@@ -10,12 +10,12 @@ from synapse_net.inference.actin import segment_actin
 
 def parse_args():
     parser = configargparse.ArgParser(
-        config_file_parser_class=configargparse.TomlConfigParser(["run_info"]),
+        config_file_parser_class=configargparse.TomlConfigParser(["run_info", "predict_actin"]),
         ignore_unknown_config_file_keys=True,
     )
     parser.add_argument("--config", is_config_file_arg=True, help="Path to TOML config file.")
     parser.add_argument("--data_root", type=str, required=True)
-    parser.add_argument("--real_dataset", type=str, required=True)
+    parser.add_argument("--dataset", type=str, required=True)
     parser.add_argument("--run", type=int, required=True)
 
     parser.add_argument("--checkpoint", type=str, default=None)
@@ -102,8 +102,8 @@ def main():
     DATA_ROOT = Path(args.data_root)
 
     checkpoint = args.checkpoint or str(
-        DATA_ROOT / "training" / "out" / args.real_dataset / f"run{args.run}"
-        / "checkpoints" / f"actin-{args.real_dataset}-run{args.run}"
+        DATA_ROOT / "training" / "out" / args.dataset / f"run{args.run}"
+        / "checkpoints" / f"actin-{args.dataset}-run{args.run}"
     )
     model_name = Path(checkpoint).stem
     threshold = args.threshold
@@ -113,7 +113,7 @@ def main():
     elif args.data_paths:
         data_paths = [Path(p) for p in args.data_paths]
     else:
-        data_paths = sorted((DATA_ROOT / "predictions" / args.real_dataset).glob("*.h5"))
+        data_paths = sorted((DATA_ROOT / "predictions" / args.dataset).glob("*.h5"))
 
     if not data_paths:
         raise FileNotFoundError("No h5 files found.")
@@ -167,7 +167,7 @@ def main():
         print(f"mean recall:    {np.mean([r['recall'] for r in rows]):.4f}")
         print(f"mean dice:      {np.mean([r['dice'] for r in rows]):.4f}")
 
-        csv_dir = DATA_ROOT / f"predictions/{args.real_dataset}/csv"
+        csv_dir = DATA_ROOT / f"predictions/{args.dataset}/csv"
         csv_dir.mkdir(parents=True, exist_ok=True)
         csv_path = csv_dir / f"{model_name}.csv"
         with open(csv_path, mode="w", newline="") as f:
@@ -179,7 +179,7 @@ def main():
         print(f"Saved CSV: {csv_path}")
 
         df = pd.read_csv(csv_path, dtype={"tomogram": str})
-        png_dir = DATA_ROOT / f"predictions/{args.real_dataset}/png"
+        png_dir = DATA_ROOT / f"predictions/{args.dataset}/png"
         png_dir.mkdir(parents=True, exist_ok=True)
         png_path = png_dir / f"{model_name}.png"
         save_metrics_png(df, model_name, png_path)

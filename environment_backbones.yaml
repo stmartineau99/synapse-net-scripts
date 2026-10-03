@@ -1,0 +1,50 @@
+# Environment for the sam, sam2 and dinov3 backbones.
+# Built on a grete:shared A100-SXM4-40GB (ggpu130), driver 580.178.04, CUDA 13.0.
+# sam2 and dinov3 are installed by sbatch_create_env.sh.
+# torch_em and synapse_net are installed editable from source/ by sbatch_create_env.sh.
+channels:
+    - conda-forge
+name:
+    synapse-net-backbones
+dependencies:
+    - python=3.12
+    - cuda-version=13.0
+    - pytorch
+    - torchvision
+    - torchmetrics
+    - micro_sam
+    - segment-anything
+    - timm
+    - bioimage-cpp
+    - bioimageio.spec
+    - bioimageio.core >=0.8.0
+    - python-elf >=0.9.1
+    - kornia
+    - imagecodecs
+    - natsort
+    - tifffile >=2024
+    - tensorboard
+    - zarr <3
+    - numpy
+    - scipy
+    - scikit-image
+    - scikit-learn
+    - h5py
+    - imageio
+    - mrcfile
+    - pandas
+    - pooch
+    - trimesh
+    - requests
+    - tqdm
+    - pillow
+    - hydra-core
+    - iopath
+    - omegaconf
+    - ftfy
+    - regex
+    - submitit
+    - termcolor
+    - configargparse
+    - toml
+    - pip

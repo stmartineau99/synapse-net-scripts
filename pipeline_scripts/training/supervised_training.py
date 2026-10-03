@@ -24,7 +24,7 @@ def parse_args():
     # run_info
     parser.add_argument("--data_root", type=str, required=True)
     parser.add_argument("--synthetic_dataset", type=str, required=True)
-    parser.add_argument("--real_dataset", type=str, required=True)
+    parser.add_argument("--dataset", type=str, required=True)
     parser.add_argument("--run", type=int, required=True)
 
     # supervised_training
@@ -59,11 +59,11 @@ def filter_by_conditions(paths, conditions):
 def main():
     args = parse_args()
 
-    run_name = f"actin-{args.real_dataset}-run{args.run}"
+    run_name = f"actin-{args.dataset}-run{args.run}"
     train_data_dir = Path(args.data_dir) if args.data_dir else Path(args.data_root) / "training" / args.synthetic_dataset
     out_dir = (
         Path(args.data_root) / "training" / "out"
-        / args.real_dataset / f"run{args.run}"
+        / args.dataset / f"run{args.run}"
     )
     if args.check:
         args.batch_size = 1
