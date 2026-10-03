@@ -75,6 +75,8 @@ the consuming script.
 | `[prepare_training]` | `prepare_training.py` |
 | `[supervised_training]` | `supervised_training.py` |
 | `[domain_adaptation]` | `domain_adaptation.py` |
+| `[semisupervised_learning]` | `semisupervised_training.py` |
+| `[predict_actin]` | `predict_actin.py` |
 | `[jobs]` | `slurm_scripts/submit.py` only; no pipeline script reads it |
 
 `run<N>` identifies one experiment. The number must agree in the config path
@@ -92,16 +94,20 @@ hardcoded paths and module-level constants.
 
 A run config states how its jobs are submitted. `[jobs].env` is the micromamba env. Each
 `[jobs.<name>]` table has a `script`, relative to the repository root, and a `slurm_profile`, a file
-in `slurm_scripts/profiles/`. Optional keys: `env`, `slurm = {...}` merged over the profile, and
-`args = {...}` for flags after `--config`. See `configs/template.toml`.
+in `slurm_scripts/profiles/`. Optional keys: `env`, which overrides `[jobs].env`, and
+`slurm = {...}`, merged over the profile. A script's flags go in its own section, not in the job
+table. See `configs/template.toml`.
 
 ```bash
 python slurm_scripts/submit.py configs/deepict/deepict_run39.toml --dry_run
 python slurm_scripts/submit.py configs/deepict/deepict_run39.toml
-python slurm_scripts/submit.py <config> --job supervised_training --profile grete_a100_80gb
+python slurm_scripts/submit.py <config> --job predict_actin
 ```
 
-`--job` is needed only if the config has more than one job. The generated `.sh` and the job
+Group several jobs in one config only when they form a chain, for example train and then
+predict. Without `--job`, a single job is submitted alone, and several jobs are submitted as a
+chain in config order, each with `--dependency=afterok` on the previous one. `--job <name>`
+submits only that job, to redo a failed stage or to test one. The generated `.sh` and the job
 output go to `slurm_logs/<config>_<job>_<timestamp>.{sh,out}`. Loader checks (`--check`) are not
 submitted. The user runs them directly on the Jupyter desktop.
 

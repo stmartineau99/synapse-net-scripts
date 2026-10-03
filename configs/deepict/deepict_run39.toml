@@ -22,9 +22,17 @@ confidence_threshold = 0.9
 labeled_fraction = 1.0
 use_sample_mask = true
 
+[predict_actin]
+data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/reconstructed_10A/h5/subvolumes/test"
+use_sample_mask = true
+
 [jobs]
 env = "synapse-net-backbones"
 
 [jobs.semisupervised_learning]
 script = "pipeline_scripts/training/semisupervised_training.py"
 slurm_profile = "grete_a100_80gb"
+
+[jobs.predict_actin]
+script = "pipeline_scripts/inference/predict_actin.py"
+slurm_profile = "grete_interactive"

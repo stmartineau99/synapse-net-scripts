@@ -10,7 +10,7 @@ from synapse_net.inference.actin import segment_actin
 
 def parse_args():
     parser = configargparse.ArgParser(
-        config_file_parser_class=configargparse.TomlConfigParser(["run_info"]),
+        config_file_parser_class=configargparse.TomlConfigParser(["run_info", "predict_actin"]),
         ignore_unknown_config_file_keys=True,
     )
     parser.add_argument("--config", is_config_file_arg=True, help="Path to TOML config file.")
