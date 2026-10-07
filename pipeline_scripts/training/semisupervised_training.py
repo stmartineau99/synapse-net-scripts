@@ -51,8 +51,9 @@ def parse_args():
     parser.add_argument("--labeled_fraction", type=float, default=1.0)
     parser.add_argument("--use_sample_mask", action="store_true", default=False)
     parser.add_argument("--sample_mask_key", type=str, default="sample_mask")
-    parser.add_argument("--check", action="store_true", default=False)
     parser.add_argument("--warmup_only", action="store_true", default=False, help="Stop after the teacher warmup.")
+    parser.add_argument("--check", action="store_true", default=False)
+    
 
     return parser.parse_args()
 
