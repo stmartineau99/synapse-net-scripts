@@ -1,4 +1,5 @@
 partition = "large96s"
+qos = "2h"
 time = "01:00:00"
 cpus = 8
 mem = "40G"
