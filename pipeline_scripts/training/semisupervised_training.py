@@ -122,6 +122,7 @@ def main():
         backbone=args.backbone,
         model_type=BACKBONE_MODEL_TYPES.get(args.backbone),
         check=args.check,
+        separate_backward=True,
     )
 
 
