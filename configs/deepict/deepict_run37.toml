@@ -31,8 +31,8 @@ env = "synapse-net-backbones"
 
 [jobs.semisupervised_learning]
 script = "pipeline_scripts/training/semisupervised_training.py"
-slurm_profile = "grete_a100_80gb"
+slurm_profile = "grete_a100_80gb_24h"
 
 [jobs.predict_actin]
 script = "pipeline_scripts/inference/predict_actin.py"
-slurm_profile = "grete_interactive"
+slurm_profile = "grete_interactive_2h"

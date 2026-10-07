@@ -52,6 +52,7 @@ def parse_args():
     parser.add_argument("--use_sample_mask", action="store_true", default=False)
     parser.add_argument("--sample_mask_key", type=str, default="sample_mask")
     parser.add_argument("--check", action="store_true", default=False)
+    parser.add_argument("--warmup_only", action="store_true", default=False, help="Stop after the teacher warmup.")
 
     return parser.parse_args()
 
@@ -111,7 +112,7 @@ def main():
         confidence_threshold=args.confidence_threshold,
         batch_size=args.batch_size,
         lr=args.lr,
-        n_iterations=args.n_iterations,
+        n_iterations=0 if args.warmup_only else args.n_iterations,
         teacher_warmup_iterations=args.teacher_warmup_iterations,
         source_checkpoint=args.source_checkpoint,
         supervised_sampler=supervised_sampler,

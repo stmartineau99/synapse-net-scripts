@@ -18,11 +18,15 @@ OPTIONAL_SBATCH = {
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Submit the jobs from the [jobs] table of a run config.")
+    parser = argparse.ArgumentParser(
+        description="Submit the jobs from the [jobs] table of a run config. Unknown arguments go to the job script."
+    )
     parser.add_argument("config", type=str, help="Path to TOML config file.")
     parser.add_argument("--job", type=str, default=None, help="Submit only this job. By default, submit all jobs.")
+    parser.add_argument("--slurm_profile", type=str, default=None, help="Override slurm profile in config.")
     parser.add_argument("--dry_run", action="store_true", default=False)
-    return parser.parse_args()
+    
+    return parser.parse_known_args()
 
 
 def load_profile(name):
@@ -54,13 +58,13 @@ def load_jobs(config_path, job=None):
     return selected
 
 
-def build_script(config_path, job, spec, profile, out_path):
+def build_script(config_path, job, spec, profile, out_path, extra_args=()):
     slurm = {**profile, **spec.get("slurm", {})}
     script = REPO_DIR / spec["script"]
     if not script.exists():
         raise FileNotFoundError(f"Missing script: {script}")
 
-    command = ["python", str(script), "--config", str(config_path)]
+    command = ["python", str(script), "--config", str(config_path), *extra_args]
     lines = [
         "#!/bin/bash",
         f"#SBATCH --job-name={config_path.stem}_{job}",
@@ -100,17 +104,19 @@ def submit_job(script_text, sh_path, dependency=None):
 
 
 def main():
-    args = parse_args()
+    args, extra_args = parse_args()
 
     config_path = Path(args.config).resolve()
     jobs = load_jobs(config_path, args.job)
+    if extra_args and len(jobs) > 1:
+        raise ValueError(f"Extra arguments {extra_args} need a specific job. Select one with --job.")
 
-    timestamp = f"{datetime.now():%Y%m%d_%H%M%S}"
+    timestamp = f"{datetime.now():%Y%m%d_%H%M}"
     dependency = None
     for job, spec in jobs:
-        profile = load_profile(spec["slurm_profile"])
+        profile = load_profile(args.slurm_profile or spec["slurm_profile"])
         stem = f"{config_path.stem}_{job}_{timestamp}"
-        script_text = build_script(config_path, job, spec, profile, LOG_DIR / f"{stem}.out")
+        script_text = build_script(config_path, job, spec, profile, LOG_DIR / f"{stem}.out", extra_args)
 
         if args.dry_run:
             print(shlex.join(sbatch_command(LOG_DIR / f"{stem}.sh", dependency)))

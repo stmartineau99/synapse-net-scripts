@@ -16,7 +16,7 @@ label_key = "/labels/actin"
 patch_shape = [6, 256, 256]
 batch_size = 1
 lr = 1e-4
-n_iterations = 0
+n_iterations = 2_000
 teacher_warmup_iterations = 2_000
 confidence_threshold = 0.9
 labeled_fraction = 1.0
@@ -31,9 +31,9 @@ env = "synapse-net-backbones"
 
 [jobs.semisupervised_learning]
 script = "pipeline_scripts/training/semisupervised_training.py"
-slurm_profile = "grete_a100_80gb"
+slurm_profile = "grete_a100_80gb_24h"
 slurm = { time = "01:45:00" }
 
 [jobs.predict_actin]
 script = "pipeline_scripts/inference/predict_actin.py"
-slurm_profile = "grete_interactive"
+slurm_profile = "grete_interactive_2h"
