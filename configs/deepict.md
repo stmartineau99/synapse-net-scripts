@@ -266,3 +266,45 @@ Repeat of run 6 with reduced iterations and per-epoch checkpoints for checkpoint
 **lr:** 1e-4 | **batch_size:** 4 | **n_iterations:** 25,000
 
 Baseline run on `deepict_dataset_7`.
+
+---
+
+## Run 39
+
+**Type:** SSDA (Full Label)
+**Source checkpoint:** none, warmup trained in this run (`actin-deepict-run39-warmup`)
+**Backbone:** dinov3 (`vit_b`)
+**Data:** `experimental/deepict/reconstructed_10A/h5/subvolumes/`
+**patch_shape:** [6, 256, 256]
+**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000 | **teacher_warmup_iterations:** 2,000
+
+Tests a dinov3 backbone with a thin z patch. Compare with run 41, which differs only in the z patch size.
+The mean-teacher stage uses the default intensity augmentations, Gaussian blur and noise. The noise std is
+scaled with `clip_max` to the [0, 1] range of the dinov3 `raw_transform`.
+
+---
+
+## Run 40
+
+**Type:** SSDA (Full Label)
+**Source checkpoint:** none, warmup trained in this run (`actin-deepict-run40-warmup`)
+**Backbone:** dinov3 (`vit_b`)
+**Data:** `experimental/deepict/reconstructed_10A/h5/subvolumes/`
+**patch_shape:** [12, 256, 256]
+**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 2,000 | **teacher_warmup_iterations:** 1,000
+
+Same as run 41 with a shorter teacher warmup. Only the warmup has run so far.
+
+---
+
+## Run 41
+
+**Type:** SSDA (Full Label)
+**Source checkpoint:** none, warmup trained in this run (`actin-deepict-run41-warmup`)
+**Backbone:** dinov3 (`vit_b`)
+**Data:** `experimental/deepict/reconstructed_10A/h5/subvolumes/`
+**patch_shape:** [12, 256, 256]
+**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000 | **teacher_warmup_iterations:** 2,000
+
+Compare with run 39, which uses z=6. The intensity augmentations are scaled for the dinov3 `raw_transform`,
+as in run 39.
