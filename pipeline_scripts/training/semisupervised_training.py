@@ -9,8 +9,8 @@ LABELED_FRACTION_SEED = 42
 
 BACKBONE_MODEL_TYPES = {
     "sam": "vit_b_em_organelles",
-    "sam2": "hvit_b",
     "dinov3": "vit_b",
+    "cryosiam": None,
 }
 
 def has_label_key(path, label_key):

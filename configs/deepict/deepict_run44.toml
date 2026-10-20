@@ -1,0 +1,38 @@
+[run_info]
+data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
+synthetic_dataset = "deepict_dataset_9"
+dataset = "deepict"
+run = 44
+
+[semisupervised_learning]
+backbone = "cryosiam"
+data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/reconstructed_10A/h5/subvolumes"
+train_glob = "train/*.h5"
+val_glob = "val/*.h5"
+supervised_train_glob = "train/*.h5"
+supervised_val_glob = "val/*.h5"
+raw_key = "raw"
+label_key = "/labels/actin"
+patch_shape = [64, 256, 256]
+batch_size = 1
+lr = 1e-4
+n_iterations = 10_000
+teacher_warmup_iterations = 2_000
+confidence_threshold = 0.9
+labeled_fraction = 1.0
+use_sample_mask = true
+
+[predict_actin]
+data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/reconstructed_10A/h5/subvolumes/test"
+use_sample_mask = true
+
+[jobs]
+env = "synapse-net-backbones"
+
+[jobs.semisupervised_learning]
+script = "pipeline_scripts/training/semisupervised_training.py"
+slurm_profile = "grete_a100_80gb_24h"
+
+[jobs.predict_actin]
+script = "pipeline_scripts/inference/predict_actin.py"
+slurm_profile = "grete_interactive_2h"

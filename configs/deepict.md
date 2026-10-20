@@ -308,3 +308,44 @@ Same as run 41 with a shorter teacher warmup. Only the warmup has run so far.
 
 Compare with run 39, which uses z=6. The intensity augmentations are scaled for the dinov3 `raw_transform`,
 as in run 39.
+
+---
+
+## Run 42
+
+**Type:** SSDA (Full Label)
+**Source checkpoint:** none, warmup trained in this run (`actin-deepict-run42-warmup`)
+**Backbone:** sam (`vit_b_em_organelles`), `use_strip_pooling` enabled
+**Data:** `experimental/deepict/reconstructed_10A/h5/subvolumes/`
+**patch_shape:** [7, 256, 256]
+**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000 | **teacher_warmup_iterations:** 2,000
+
+Rerun of the sam backbone (run 37) with strip pooling in the UNETR3D decoder, which should give the
+model more 3D context. z=7 is the largest patch depth that fits in memory for sam.
+
+---
+
+## Run 43
+
+**Type:** SSDA (Full Label)
+**Source checkpoint:** none, warmup trained in this run (`actin-deepict-run43-warmup`)
+**Backbone:** dinov3 (`vit_b`), `use_strip_pooling` enabled
+**Data:** `experimental/deepict/reconstructed_10A/h5/subvolumes/`
+**patch_shape:** [14, 256, 256]
+**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000 | **teacher_warmup_iterations:** 2,000
+
+Same as run 41 with strip pooling in the UNETR3D decoder, which should give the model more 3D context.
+z=14 is the largest patch depth that fits in memory for dinov3.
+
+---
+
+## Run 44
+
+**Type:** SSDA (Full Label)
+**Source checkpoint:** none, warmup trained in this run (`actin-deepict-run44-warmup`)
+**Backbone:** cryosiam (3D ResNet encoder)
+**Data:** `experimental/deepict/reconstructed_10A/h5/subvolumes/`
+**patch_shape:** [64, 256, 256]
+**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000 | **teacher_warmup_iterations:** 2,000
+
+First run with the cryosiam backbone, pretrained on synthetic tomograms. 
