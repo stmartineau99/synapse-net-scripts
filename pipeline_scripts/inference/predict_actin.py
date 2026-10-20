@@ -6,6 +6,7 @@ import pandas as pd
 import h5py
 from pathlib import Path
 from synapse_net.inference.actin import segment_actin
+from synapse_net.training.models import get_raw_transform
 
 
 def parse_args():
@@ -19,6 +20,7 @@ def parse_args():
     parser.add_argument("--run", type=int, required=True)
 
     parser.add_argument("--checkpoint", type=str, default=None)
+    parser.add_argument("--backbone", type=str, default=None, help="The backbone the checkpoint was trained with.")
     parser.add_argument("--threshold", type=float, default=0.5)
     parser.add_argument("--use_sample_mask", action="store_true", help="Mask the prediction with sample_mask.")
     group = parser.add_mutually_exclusive_group(required=False)
@@ -107,6 +109,7 @@ def main():
     )
     model_name = Path(checkpoint).stem
     threshold = args.threshold
+    preprocess = get_raw_transform(args.backbone)[0]
 
     if args.data_dir:
         data_paths = sorted(Path(args.data_dir).glob("*.h5"))
@@ -136,7 +139,8 @@ def main():
             print(f"Using stored predictions (threshold={threshold})\n")
         else:
             _, pred = segment_actin(
-                raw, checkpoint, foreground_threshold=threshold, verbose=True, return_predictions=True
+                raw, checkpoint, foreground_threshold=threshold, verbose=True, return_predictions=True,
+                preprocess=preprocess,
             )
 
         if mask is not None:

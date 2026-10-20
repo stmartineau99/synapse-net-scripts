@@ -23,6 +23,7 @@ labeled_fraction = 1.0
 use_sample_mask = true
 
 [predict_actin]
+backbone = "sam"
 data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/reconstructed_10A/h5/subvolumes/test"
 use_sample_mask = true
 

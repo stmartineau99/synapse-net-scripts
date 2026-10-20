@@ -5,6 +5,12 @@ from pathlib import Path
 from synapse_net.training import supervised_training
 from torch_em.data.sampler import MinForegroundSampler
 
+BACKBONE_MODEL_TYPES = {
+    "sam": "vit_b_em_organelles",
+    "dinov3": "vit_b",
+    "cryosiam": None,
+}
+
 
 def has_label_key(path, label_key):
     with h5py.File(path, "r") as f:
@@ -23,12 +29,13 @@ def parse_args():
 
     # run_info
     parser.add_argument("--data_root", type=str, required=True)
-    parser.add_argument("--synthetic_dataset", type=str, required=True)
+    parser.add_argument("--synthetic_dataset", type=str, default=None)
     parser.add_argument("--dataset", type=str, required=True)
     parser.add_argument("--run", type=int, required=True)
 
     # supervised_training
     parser.add_argument("--data_dir", type=str, default=None)
+    parser.add_argument("--backbone", type=str, default=None, choices=list(BACKBONE_MODEL_TYPES))
     parser.add_argument("--train_glob", type=str, default="train/*.h5")
     parser.add_argument("--val_glob", type=str, default="val/*.h5")
     parser.add_argument("--label_key", type=str, default="/labels/actin")
@@ -59,8 +66,14 @@ def filter_by_conditions(paths, conditions):
 def main():
     args = parse_args()
 
+    if args.data_dir is None and args.synthetic_dataset is None:
+        raise ValueError("Set either data_dir or synthetic_dataset.")
+
     run_name = f"actin-{args.dataset}-run{args.run}"
-    train_data_dir = Path(args.data_dir) if args.data_dir else Path(args.data_root) / "training" / args.synthetic_dataset
+    train_data_dir = (
+        Path(args.data_dir) if args.data_dir
+        else Path(args.data_root) / "training" / args.synthetic_dataset
+    )
     out_dir = (
         Path(args.data_root) / "training" / "out"
         / args.dataset / f"run{args.run}"
@@ -103,6 +116,8 @@ def main():
         checkpoint_path=args.source_checkpoint,
         check=args.check,
         save_every_kth_epoch=args.save_every_kth_epoch,
+        backbone=args.backbone,
+        model_type=BACKBONE_MODEL_TYPES.get(args.backbone),
         # percentile_norm=args.percentile_norm,
     )
 
