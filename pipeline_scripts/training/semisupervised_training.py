@@ -7,11 +7,6 @@ from torch_em.data.sampler import MinForegroundSampler
 
 LABELED_FRACTION_SEED = 42
 
-BACKBONE_MODEL_TYPES = {
-    "sam": "vit_b_em_organelles",
-    "dinov3": "vit_b",
-    "cryosiam": None,
-}
 
 def has_label_key(path, label_key):
     with h5py.File(path, "r") as f:
@@ -35,7 +30,8 @@ def parse_args():
     # semisupervised_learning
     parser.add_argument("--data_dir", type=str, default=None)
     parser.add_argument("--source_checkpoint", type=str, default=None)
-    parser.add_argument("--backbone", type=str, default=None, choices=list(BACKBONE_MODEL_TYPES))
+    parser.add_argument("--backbone", type=str, default=None)
+    parser.add_argument("--model_type", type=str, default=None)
     parser.add_argument("--train_glob", type=str, default="*.h5")
     parser.add_argument("--val_glob", type=str, default="*.h5")
     parser.add_argument("--supervised_train_glob", type=str, required=True)
@@ -53,7 +49,6 @@ def parse_args():
     parser.add_argument("--sample_mask_key", type=str, default="sample_mask")
     parser.add_argument("--warmup_only", action="store_true", default=False, help="Stop after the teacher warmup.")
     parser.add_argument("--check", action="store_true", default=False)
-    
 
     return parser.parse_args()
 
@@ -122,7 +117,7 @@ def main():
         unsupervised_sampler=unsupervised_sampler,
         supervised_sampler=supervised_sampler,
         backbone=args.backbone,
-        model_type=BACKBONE_MODEL_TYPES.get(args.backbone),
+        model_type=args.model_type,
         separate_backward=True,
         check=args.check,
     )
