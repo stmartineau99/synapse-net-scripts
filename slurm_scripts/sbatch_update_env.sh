@@ -8,6 +8,7 @@
 #SBATCH --mem=32G
 #SBATCH -G A100
 #SBATCH -C inet
+#SBATCH --qos=2h
 
 # Updates an existing synapse-net-backbones env in place with the steps of sbatch_create_env.sh,
 # plus monai for the cryosiam backbone. Safe to run again.
