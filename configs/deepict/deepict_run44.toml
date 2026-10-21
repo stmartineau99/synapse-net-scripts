@@ -4,7 +4,7 @@ synthetic_dataset = "deepict_dataset_9"
 dataset = "deepict"
 run = 44
 
-[semisupervised_learning]
+[semisupervised_training]
 backbone = "cryosiam"
 data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/reconstructed_10A/h5/subvolumes"
 train_glob = "train/*.h5"
@@ -31,7 +31,7 @@ use_sample_mask = true
 [jobs]
 env = "synapse-net-backbones"
 
-[jobs.semisupervised_learning]
+[jobs.semisupervised_training]
 script = "pipeline_scripts/training/semisupervised_training.py"
 slurm_profile = "grete_a100_80gb_24h"
 

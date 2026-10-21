@@ -3,7 +3,6 @@ import tomllib
 import argparse
 import subprocess
 from pathlib import Path
-from datetime import datetime
 
 REPO_DIR = Path(__file__).resolve().parents[1]
 PROFILE_DIR = Path(__file__).resolve().parent / "profiles"
@@ -102,6 +101,7 @@ def submit_job(script_text, sh_path, dependency=None):
     if result.returncode != 0:
         raise RuntimeError(f"sbatch failed for {sh_path}: {result.stderr.strip()}")
     job_id = result.stdout.split()[-1]
+    sh_path.rename(sh_path.with_name(f"{sh_path.stem}_{job_id}.sh"))
     print(f"Submitted {sh_path.stem} as job {job_id}.")
     return job_id
 
@@ -114,12 +114,11 @@ def main():
     if extra_args and len(jobs) > 1:
         raise ValueError(f"Extra arguments {extra_args} need a specific job. Select one with --job.")
 
-    timestamp = f"{datetime.now():%Y%m%d_%H%M}"
     dependency = None
     for job, spec in jobs:
         profile = load_profile(args.slurm_profile or spec["slurm_profile"])
-        stem = f"{config_path.stem}_{job}_{timestamp}"
-        script_text = build_script(config_path, job, spec, profile, LOG_DIR / f"{stem}.out", extra_args, args.time)
+        stem = f"{config_path.stem}_{job}"
+        script_text = build_script(config_path, job, spec, profile, LOG_DIR / f"{stem}_%j.out", extra_args, args.time)
 
         if args.dry_run:
             print(shlex.join(sbatch_command(LOG_DIR / f"{stem}.sh", dependency)))

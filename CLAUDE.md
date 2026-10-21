@@ -75,7 +75,7 @@ the consuming script.
 | `[prepare_training]` | `prepare_training.py` |
 | `[supervised_training]` | `supervised_training.py` |
 | `[domain_adaptation]` | `domain_adaptation.py` |
-| `[semisupervised_learning]` | `semisupervised_training.py` |
+| `[semisupervised_training]` | `semisupervised_training.py` |
 | `[predict_actin]` | `predict_actin.py` |
 | `[jobs]` | `slurm_scripts/submit.py` |
 

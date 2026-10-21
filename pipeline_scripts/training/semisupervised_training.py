@@ -16,7 +16,7 @@ def has_label_key(path, label_key):
 def parse_args():
     parser = configargparse.ArgParser(
         config_file_parser_class=configargparse.TomlConfigParser(
-            ["run_info", "semisupervised_learning"]
+            ["run_info", "semisupervised_training"]
         )
     )
     parser.add_argument("--config", is_config_file_arg=True, help="Path to TOML config file.")
@@ -27,7 +27,7 @@ def parse_args():
     parser.add_argument("--dataset", type=str, required=True)
     parser.add_argument("--run", type=int, required=True)
 
-    # semisupervised_learning
+    # semisupervised_training
     parser.add_argument("--data_dir", type=str, default=None)
     parser.add_argument("--source_checkpoint", type=str, default=None)
     parser.add_argument("--backbone", type=str, default=None)
