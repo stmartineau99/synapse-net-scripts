@@ -43,6 +43,8 @@ def parse_args():
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--n_iterations", type=int, default=10_000)
     parser.add_argument("--teacher_warmup_iterations", type=int, default=1000)
+    parser.add_argument("--n_samples_train", type=int, default=None)
+    parser.add_argument("--n_samples_val", type=int, default=None)
     parser.add_argument("--confidence_threshold", type=float, default=0.9)
     parser.add_argument("--labeled_fraction", type=float, default=1.0)
     parser.add_argument("--use_sample_mask", action="store_true", default=False)
@@ -111,6 +113,8 @@ def main():
         lr=args.lr,
         n_iterations=0 if args.warmup_only else args.n_iterations,
         teacher_warmup_iterations=args.teacher_warmup_iterations,
+        n_samples_train=args.n_samples_train,
+        n_samples_val=args.n_samples_val,
         train_mask_paths=train_mask_paths,
         val_mask_paths=val_mask_paths,
         sample_mask_key=args.sample_mask_key,

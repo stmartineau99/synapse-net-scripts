@@ -24,8 +24,9 @@ def parse_args():
     parser.add_argument("config", type=str, help="Path to TOML config file.")
     parser.add_argument("--job", type=str, default=None, help="Submit only this job. By default, submit all jobs.")
     parser.add_argument("--slurm_profile", type=str, default=None, help="Override slurm profile in config.")
+    parser.add_argument("--time", type=str, default=None, help="Override the slurm time limit, e.g. 04:00:00.")
     parser.add_argument("--dry_run", action="store_true", default=False)
-    
+
     return parser.parse_known_args()
 
 
@@ -58,8 +59,10 @@ def load_jobs(config_path, job=None):
     return selected
 
 
-def build_script(config_path, job, spec, profile, out_path, extra_args=()):
+def build_script(config_path, job, spec, profile, out_path, extra_args=(), time=None):
     slurm = {**profile, **spec.get("slurm", {})}
+    if time:
+        slurm["time"] = time
     script = REPO_DIR / spec["script"]
     if not script.exists():
         raise FileNotFoundError(f"Missing script: {script}")
@@ -116,7 +119,7 @@ def main():
     for job, spec in jobs:
         profile = load_profile(args.slurm_profile or spec["slurm_profile"])
         stem = f"{config_path.stem}_{job}_{timestamp}"
-        script_text = build_script(config_path, job, spec, profile, LOG_DIR / f"{stem}.out", extra_args)
+        script_text = build_script(config_path, job, spec, profile, LOG_DIR / f"{stem}.out", extra_args, args.time)
 
         if args.dry_run:
             print(shlex.join(sbatch_command(LOG_DIR / f"{stem}.sh", dependency)))

@@ -318,7 +318,7 @@ as in run 39.
 **Backbone:** sam (`vit_b_em_organelles`), `use_strip_pooling` enabled
 **Data:** `experimental/deepict/reconstructed_10A/h5/subvolumes/`
 **patch_shape:** [7, 256, 256]
-**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000 | **teacher_warmup_iterations:** 2,000
+**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000 | **teacher_warmup_iterations:** 2,000 | **n_samples_train:** 200
 
 Rerun of the sam backbone (run 37) with strip pooling in the UNETR3D decoder, which should give the
 model more 3D context. z=7 is the largest patch depth that fits in memory for sam.
@@ -332,7 +332,7 @@ model more 3D context. z=7 is the largest patch depth that fits in memory for sa
 **Backbone:** dinov3 (`vit_b`), `use_strip_pooling` enabled
 **Data:** `experimental/deepict/reconstructed_10A/h5/subvolumes/`
 **patch_shape:** [14, 256, 256]
-**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000 | **teacher_warmup_iterations:** 2,000
+**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000 | **teacher_warmup_iterations:** 2,000 | **n_samples_train:** 200
 
 Same as run 41 with strip pooling in the UNETR3D decoder, which should give the model more 3D context.
 z=14 is the largest patch depth that fits in memory for dinov3.
@@ -346,6 +346,6 @@ z=14 is the largest patch depth that fits in memory for dinov3.
 **Backbone:** cryosiam (3D ResNet encoder)
 **Data:** `experimental/deepict/reconstructed_10A/h5/subvolumes/`
 **patch_shape:** [64, 256, 256]
-**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000 | **teacher_warmup_iterations:** 2,000
+**lr:** 1e-4 | **batch_size:** 1 | **n_iterations:** 10,000 | **teacher_warmup_iterations:** 2,000 | **n_samples_train:** 200
 
 First run with the cryosiam backbone, pretrained on synthetic tomograms. 
