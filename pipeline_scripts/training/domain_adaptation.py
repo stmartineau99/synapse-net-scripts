@@ -3,6 +3,7 @@ import h5py
 import configargparse
 from pathlib import Path
 from synapse_net.training.domain_adaptation import mean_teacher_adaptation
+from helpers import _get_dinov3_checkpoint
 from torch_em.data.sampler import MinForegroundSampler
 
 LABELED_FRACTION_SEED = 42
@@ -40,6 +41,8 @@ def parse_args():
     parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--n_iterations", type=int, default=50_000)
+    parser.add_argument("--backbone", type=str, default=None)
+    parser.add_argument("--model_type", type=str, default=None)
     parser.add_argument("--check", action="store_true", default=False)
     # required for semisupervised mode
     parser.add_argument("--supervised_train_glob", type=str, default=None)
@@ -107,6 +110,8 @@ def main():
 
     print(f"Running {mode.upper()} for {args.run}.")
 
+    encoder_checkpoint = _get_dinov3_checkpoint(args.model_type) if args.backbone == "dinov3" else None
+
     mean_teacher_adaptation(
         name=run_name,
         unsupervised_train_paths=train_paths,
@@ -123,6 +128,9 @@ def main():
         # val_mask_paths=val_paths,
         # sample_mask_key=args.sample_mask_key,
         # unsupervised_sampler=unsupervised_sampler,
+        backbone=args.backbone,
+        model_type=args.model_type,
+        encoder_checkpoint=encoder_checkpoint,
         check=args.check,
         **supervised_kwargs,
     )

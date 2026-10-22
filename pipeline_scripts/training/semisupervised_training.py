@@ -3,6 +3,7 @@ import h5py
 import configargparse
 from pathlib import Path
 from synapse_net.training.semisupervised_training import semisupervised_training
+from helpers import _get_dinov3_checkpoint
 from torch_em.data.sampler import MinForegroundSampler
 
 LABELED_FRACTION_SEED = 42
@@ -97,6 +98,8 @@ def main():
 
     print(f"Running semisupervised training for run {args.run}.")
 
+    encoder_checkpoint = _get_dinov3_checkpoint(args.model_type) if args.backbone == "dinov3" else None
+
     semisupervised_training(
         name=run_name,
         unsupervised_train_paths=unsupervised_train_paths,
@@ -122,6 +125,7 @@ def main():
         supervised_sampler=supervised_sampler,
         backbone=args.backbone,
         model_type=args.model_type,
+        encoder_checkpoint=encoder_checkpoint,
         separate_backward=True,
         check=args.check,
     )

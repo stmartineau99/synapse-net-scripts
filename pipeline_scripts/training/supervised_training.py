@@ -3,6 +3,7 @@ import configargparse
 import torch_em.loss
 from pathlib import Path
 from synapse_net.training import supervised_training
+from helpers import _get_dinov3_checkpoint
 from torch_em.data.sampler import MinForegroundSampler
 
 
@@ -96,6 +97,8 @@ def main():
     sampler = MinForegroundSampler(min_fraction=0.025, p_reject=0.95)
     loss_fn = getattr(torch_em.loss, args.loss_fn)() if args.loss_fn else None
 
+    encoder_checkpoint = _get_dinov3_checkpoint(args.model_type) if args.backbone == "dinov3" else None
+
     supervised_training(
         name=run_name,
         label_key=args.label_key,
@@ -113,6 +116,7 @@ def main():
         save_every_kth_epoch=args.save_every_kth_epoch,
         backbone=args.backbone,
         model_type=args.model_type,
+        encoder_checkpoint=encoder_checkpoint,
         # percentile_norm=args.percentile_norm,
     )
 
