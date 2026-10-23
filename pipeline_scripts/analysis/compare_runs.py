@@ -3,15 +3,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from pathlib import Path
 
-DATASET = "opto"
-OUT_FILE  = "opto_runs.png"
+DATASET = "deepict"
+OUT_FILE  = "deepict_runs.png"
 
 RUNS = {
-    "Weak Baseline": "actin-opto-run1.csv",
-    "USDA": "actin-opto-run3.csv",
-    "SSDA low label": "actin-opto-run4.csv",
-    "SSDA full label": "actin-opto-run5.csv",
-    "Strong Baseline": "actin-opto-run2.csv"
+    "sam SSDA": "actin-deepict-run42.csv",
+    "dinov3 SSDA": "actin-deepict-run43.csv",
+    "cryosiam SSDA": "actin-deepict-run44.csv",
+    "cryosiam supervised": "actin-deepict-run45.csv",
 }
 
 METRICS = ["precision", "recall", "dice"]
@@ -52,7 +51,7 @@ def main():
 
     ax.set_xticks(x + width * (len(RUNS) - 1) / 2)
     ax.set_xticklabels([m.capitalize() for m in METRICS])
-    ax.set_ylim(0, 0.8)
+    ax.set_ylim(0, 1.0)
     ax.set_yticks(np.arange(0, 1.0, 0.2))
     ax.set_ylabel("Score")
     ax.legend(loc="upper right", fontsize=8)
