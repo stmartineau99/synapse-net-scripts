@@ -39,4 +39,4 @@ slurm = { time = "08:00:00" }
 
 [jobs.predict_actin]
 script = "pipeline_scripts/inference/predict_actin.py"
-slurm_profile = "grete_interactive_30m"
+slurm_profile = "grete_preemptible_30m"
