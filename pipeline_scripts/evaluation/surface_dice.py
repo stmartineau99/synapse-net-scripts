@@ -28,6 +28,7 @@ def parse_args():
     parser.add_argument("--gt_key", type=str, default="labels/actin")
     parser.add_argument("--model_name", type=str, required=True)
     parser.add_argument("--results_dir", type=str, required=True)
+    parser.add_argument("--use_sample_mask", action="store_true", help="Mask prediction and GT with sample_mask.")
     parser.add_argument("--check", action="store_true", help="Visualize intermediate outputs in Napari")
     return parser.parse_args()
 
@@ -60,14 +61,19 @@ def evaluate_surface_dice(pred, gt, raw, check):
     return surf_dice, confusion_dict
 
 
-def process_file(data_path, seg_key, gt_key, check):
+def process_file(data_path, seg_key, gt_key, check, use_sample_mask=False):
     try:
         pred = load_segmentation(data_path, seg_key)
         gt = load_segmentation(data_path, gt_key)
         raw = load_segmentation(data_path, "raw")
+        with h5py.File(data_path, "r") as f:
+            mask = f["sample_mask"][:] if use_sample_mask and "sample_mask" in f else None
 
         gt_bin = (gt == 1).astype(np.uint8)
         pred_bin = pred.astype(np.uint8)
+        if mask is not None:
+            gt_bin = gt_bin * mask.astype(np.uint8)
+            pred_bin = pred_bin * mask.astype(np.uint8)
 
         dice, confusion = evaluate_surface_dice(pred_bin, gt_bin, raw, check)
         return {
@@ -83,7 +89,7 @@ def process_file(data_path, seg_key, gt_key, check):
         return None
 
 
-def collect_results(data_paths, seg_key, gt_key, check=False):
+def collect_results(data_paths, seg_key, gt_key, check=False, use_sample_mask=False):
     results = []
 
     for data_path in tqdm(data_paths, desc="Processing segmentations"):
@@ -97,7 +103,7 @@ def collect_results(data_paths, seg_key, gt_key, check=False):
                 print(f"{seg_key} not found in {data_path.stem}.")
                 continue
 
-        res = process_file(data_path, seg_key, gt_key, check)
+        res = process_file(data_path, seg_key, gt_key, check, use_sample_mask)
         if res is None:
             continue
 
@@ -141,7 +147,7 @@ def main():
         raise FileNotFoundError("No h5 files found.")
 
     output_file = results_dir / f"{args.model_name}_surface_dice.csv"
-    results = collect_results(data_paths, seg_key, gt_key, args.check)
+    results = collect_results(data_paths, seg_key, gt_key, args.check, args.use_sample_mask)
 
     save_results(results, output_file)
 

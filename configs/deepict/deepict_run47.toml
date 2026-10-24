@@ -1,0 +1,33 @@
+[run_info]
+data_root = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data"
+dataset = "deepict"
+run = 47
+
+[supervised_training]
+backbone = "dinov3"
+model_type = "vit_b"
+data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/reconstructed_10A/h5/subvolumes"
+train_glob = "train/*.h5"
+val_glob = "val/*.h5"
+label_key = "/labels/actin"
+patch_shape = [14, 256, 256]
+batch_size = 1
+lr = 1e-4
+n_iterations = 10_000
+
+[predict_actin]
+backbone = "dinov3"
+data_dir = "/projects/extern/nhr/nhr_ni/nim00020/dir.project/sage/data/experimental/deepict/reconstructed_10A/h5/subvolumes/test"
+use_sample_mask = true
+
+[jobs]
+env = "synapse-net-backbones"
+
+[jobs.supervised_training]
+script = "pipeline_scripts/training/supervised_training.py"
+slurm_profile = "grete_a100_40gb_10h"
+slurm = { time = "4:00:00" }
+
+[jobs.predict_actin]
+script = "pipeline_scripts/inference/predict_actin.py"
+slurm_profile = "grete_interactive_30m"

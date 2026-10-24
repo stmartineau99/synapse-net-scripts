@@ -145,6 +145,8 @@ def main():
 
         if mask is not None:
             pred = pred * mask.astype(pred.dtype)
+            if has_labels:
+                gt = gt * mask.astype(gt.dtype)
         seg = (pred > threshold).astype(bool)
 
         if has_labels:
